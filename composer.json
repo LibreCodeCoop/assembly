@@ -1,0 +1,15 @@
+{
+    "name": "Assembly",
+    "description": "Manage assembly",
+    "type": "project",
+    "license": "AGPL",
+    "authors": [
+        {
+            "name": "Lyseon Tech"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "^5.4"
+    }
+}
