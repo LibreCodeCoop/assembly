@@ -51,7 +51,7 @@ class ReportMapper extends QBMapper
     public function usersAvailable($groupId)
     {
         $qb = $this->db->getQueryBuilder();
-        return $qb->select('u.displayname')
+        $query = $qb->select('u.displayname')
             ->select('u.uid')
             ->selectAlias(new Literal('a.data::jsonb -> \'email\' ->> \'value\''), 'email')
             ->selectAlias(new Literal('to_timestamp(ts.timestamp)'), 'tos_date')
@@ -70,9 +70,12 @@ class ReportMapper extends QBMapper
                     ->getSQL().')'),
                 'at',
                 'at.uid = u.uid'
-            )
-            ->where('gu.gid = :groupId')
-            ->setParameter('groupId', $groupId)
+            );
+        if ($groupId) {
+            $query->where('gu.gid = :groupId')
+                ->setParameter('groupId', $groupId);
+        }
+        return $query
             ->execute()
             ->fetchAll();
     }
