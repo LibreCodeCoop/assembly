@@ -47,7 +47,7 @@ class ReportMapper extends QBMapper
             ->fetchAll();
     }
 
-    public function usersAvailable($groupId)
+    public function usersAvailable($groupId = null)
     {
         $qb = $this->db->getQueryBuilder();
         $query = $qb->select('u.displayname')
