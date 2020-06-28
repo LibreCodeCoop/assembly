@@ -1,6 +1,7 @@
 <?php
 namespace OCA\Assembly\Controller;
 
+use OCA\Assembly\Db\ReportMapper;
 use OCP\IRequest;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\DataResponse;
@@ -9,9 +10,10 @@ use OCP\AppFramework\Controller;
 class PageController extends Controller {
 	private $userId;
 
-	public function __construct($AppName, IRequest $request, $UserId){
+	public function __construct($AppName, IRequest $request, $UserId, ReportMapper $ReportMapper){
 		parent::__construct($AppName, $request);
 		$this->userId = $UserId;
+		$this->ReportMapper =  $ReportMapper;
 	}
 
 	/**
@@ -27,5 +29,30 @@ class PageController extends Controller {
 	public function index() {
 		return new TemplateResponse('assembly', 'index');  // templates/index.php
 	}
+
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 */	
+	public function report() {
+		$data = $this->ReportMapper->getResult($this->userId, 1);
+		$responses = [];
+		foreach ($data as $row) {
+			$responses[$row['response']] = $row['total'];
+		}
+		if($data){
+			$metadata['title'] = $data[0]['title'];
+			$metadata['total'] = count($data);
+			$metadata['available'] = 15;
+		}else{
+			$metadata['total'] = 0;
+			$metadata['available'] = 0;
+		}
+		return new TemplateResponse('assembly', 'content/report', 
+			[
+				'responses'=>$responses,
+				'metadata'=>$metadata
+			] );  // templates/report.php
+	}	
 
 }

@@ -47,7 +47,7 @@ style('assembly', [
 				<div class="result-content">
 					<h1>Aptos a votar</h1>
 					<div class="result-value">
-						<h3><?php echo $metadata['Aptos'];?></h3>
+						<h3><?php echo $metadata['available'];?></h3>
 					</div>
 				</div>
 			</div>	

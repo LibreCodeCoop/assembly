@@ -23,7 +23,6 @@ class ReportMapper extends QBMapper
             ->join('f', 'forms_v2_questions', 'q', 'f.id = q.form_id')
             ->join('f', 'forms_v2_submissions', 's', 's.form_id = f.id')
             ->leftJoin('q', 'forms_v2_answers', 'a', 'a.submission_id =s.id')
-            ->join('f', 'group_user', 'gu', "jsonb_exists((f.access_json->'groups')::jsonb, gu.gid)")
             ->where('f.id = :formId')
             ->andWhere(
                 $eb->in(
