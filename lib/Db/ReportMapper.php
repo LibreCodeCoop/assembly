@@ -3,6 +3,8 @@ namespace OCA\Assembly\Db;
 
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Query\Expression\ExpressionBuilder;
+use OC\DB\QueryBuilder\Literal;
+use OC\DB\QueryBuilder\QueryFunction;
 use OCP\AppFramework\Db\QBMapper;
 use OCP\IDBConnection;
 
@@ -40,8 +42,37 @@ class ReportMapper extends QBMapper
                 )
             )
             ->groupBy('a.text', 'f.id')
-            ->setParameter('formId', $formId??1, ParameterType::INTEGER)
-            ->setParameter('userId', $userId??1, ParameterType::INTEGER)
+            ->setParameter('formId', $formId, ParameterType::INTEGER)
+            ->setParameter('userId', $userId, ParameterType::INTEGER)
+            ->execute()
+            ->fetchAll();
+    }
+
+    public function usersAvailable($groupId)
+    {
+        $qb = $this->db->getQueryBuilder();
+        return $qb->select('u.displayname')
+            ->select('u.uid')
+            ->selectAlias(new Literal('a.data::jsonb -> \'email\' ->> \'value\''), 'email')
+            ->selectAlias(new Literal('to_timestamp(ts.timestamp)'), 'tos_date')
+            ->selectAlias(new Literal('to_timestamp(at.last_activity)'), 'last_activity')
+            ->from('users', 'u')
+            ->join('u', 'accounts', 'a', 'a.uid = u.uid')
+            ->join('u', 'termsofservice_sigs', 'ts', 'u.uid = ts.user_id')
+            ->join('u', 'group_user', 'gu', 'gu.uid = u.uid')
+            ->join(
+                'u',
+                new QueryFunction('('.$this->db->getQueryBuilder()
+                    ->select('uid')
+                    ->selectAlias($qb->func()->max('last_activity'), 'last_activity')
+                    ->from('authtoken', 'sat')
+                    ->groupBy('sat.uid')
+                    ->getSQL().')'),
+                'at',
+                'at.uid = u.uid'
+            )
+            ->where('gu.gid = :groupId')
+            ->setParameter('groupId', $groupId)
             ->execute()
             ->fetchAll();
     }

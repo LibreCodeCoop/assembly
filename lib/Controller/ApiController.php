@@ -71,8 +71,6 @@ class ApiController extends BaseApiController
     }
 
     /**
-     * Indication of the API levels
-     *
      * @PublicPage
      * @NoCSRFRequired
      * @CORS
@@ -82,5 +80,17 @@ class ApiController extends BaseApiController
     public function report($formId)
     {
         return $this->ReportMapper->getResult($this->getUserId(), $formId);
+    }
+
+    /**
+     * @PublicPage
+     * @NoCSRFRequired
+     * @CORS
+     *
+     * @return array
+     */
+    public function usersAvailable($groupId)
+    {
+        return $this->ReportMapper->usersAvailable($groupId);
     }
 }
