@@ -10,6 +10,7 @@
 return [
     'routes' => [
        ['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
+       ['name' => 'page#report', 'url' => '/report', 'verb' => 'GET'],
        ['name' => 'api#report', 'url' => '/api/v1/report', 'verb' => 'GET'],
     ]
 ];

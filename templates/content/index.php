@@ -1,6 +1,4 @@
 <?php
-use OCA\News\Plugin\Client\Plugin;
-
 script('assembly', [
     'build/app.min'
 ]);
@@ -16,16 +14,7 @@ style('assembly', [
     'shortcuts'
 ]);
 
-// load plugin scripts and styles
-foreach (Plugin::getStyles() as $appName => $fileName) {
-    style($appName, $fileName);
-}
-foreach (Plugin::getScripts() as $appName => $fileName) {
-    script($appName, $fileName);
-}
 ?>
-
-
 			
 <div id="explore">
 	<div class="grid">
@@ -61,7 +50,7 @@ foreach (Plugin::getScripts() as $appName => $fileName) {
 			<div class="grid-item-content">
 				<div style="clear:both"></div>
 				<div class="explore-content">
-					<h3>Acesse a sala apara votar</h3>
+					<h3>Acesse a sala para votar</h3>
 
 					<div class="explore-logo">
 						<img ng-src="{{ entry.image }}" ng-if="entry.image">
@@ -90,18 +79,9 @@ foreach (Plugin::getScripts() as $appName => $fileName) {
 					</div>
 				</div>
 				<div class="explore-subscribe">
-					<a class="button" href="https://nc.lt.coop.br/apps/assembly/img/resultado.png" target="_blank">Acessar</a>
+					<a class="button" href="/index.php/apps/assembly/report" target="_blank">Acessar</a>
 				</div>
 			</div>
 		</div>
 	</div>	
 </div>
-
-
-<script>
-$("button").click(function(){
-  $.get("demo_test.asp", function(data, status){
-    alert("Data: " + data + "\nStatus: " + status);
-  });
-}); 	
-</script>
