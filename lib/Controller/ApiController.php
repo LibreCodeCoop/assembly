@@ -15,7 +15,7 @@
 
 namespace OCA\Assembly\Controller;
 
-use OCA\Assembly\Service\ReportService;
+use OCA\Assembly\Db\ReportMapper;
 use \OCP\IRequest;
 use \OCP\IUserSession;
 use \OCP\AppFramework\ApiController as BaseApiController;
@@ -32,9 +32,9 @@ class ApiController extends BaseApiController
      */
     private $userSession;
     /**
-     * @var ReportService
+     * @var ReportMapper
      */
-    private $reportService;
+    private $ReportMapper;
 
 
 
@@ -47,11 +47,11 @@ class ApiController extends BaseApiController
      * @param IRequest      $request        The request
      * @param IUserSession  $userSession    The user session
      */
-    public function __construct($appName, IRequest $request, IUserSession $userSession, ReportService $reportService)
+    public function __construct($appName, IRequest $request, IUserSession $userSession, ReportMapper $ReportMapper)
     {
         parent::__construct($appName, $request);
         $this->userSession = $userSession;
-        $this->reportService =  $reportService;
+        $this->ReportMapper =  $ReportMapper;
     }
 
     /**
@@ -79,9 +79,8 @@ class ApiController extends BaseApiController
      *
      * @return array
      */
-    public function report()
+    public function report($formId)
     {
-        $this->reportService->getResult($this->getUserId(), $formId);
-        return "xxx";
+        return $this->ReportMapper->getResult($this->getUserId(), $formId);
     }
 }
