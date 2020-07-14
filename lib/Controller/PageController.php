@@ -38,12 +38,13 @@ class PageController extends Controller {
 		$data = $this->ReportMapper->getResult($this->userId, 1);
 		$available = $this->ReportMapper->usersAvailable();
 		$responses = [];
+		$metadata['total'] = 0;
 		foreach ($data as $row) {
 			$responses[$row['response']] = $row['total'];
+			$metadata['total']+=$row['total'];
 		}
 		if($data){
 			$metadata['title'] = $data[0]['title'];
-			$metadata['total'] = count($data);
 			$metadata['available'] = count($available);
 		}else{
 			$metadata['total'] = 0;

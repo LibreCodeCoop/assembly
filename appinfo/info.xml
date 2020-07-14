@@ -16,7 +16,7 @@
     </dependencies>
     <navigations>
         <navigation>
-            <name>Assembly</name>
+            <name>Távola</name>
             <route>assembly.page.index</route>
         </navigation>
     </navigations>
