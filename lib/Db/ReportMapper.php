@@ -46,6 +46,7 @@ class ReportMapper extends QBMapper
             ->execute()
             ->fetchAll();
     }
+    
 
     public function usersAvailable($groupId = null)
     {
@@ -77,5 +78,21 @@ class ReportMapper extends QBMapper
         return $query
             ->execute()
             ->fetchAll();
+    }
+
+    public function getPoll($userId)
+    {
+            $qb = $this->db->getQueryBuilder();
+            $query = $qb->select('f.title')
+                ->selectAlias('f.hash', 'hash')
+                ->from('users', 'u')
+                ->join('u', 'group_user', 'g', 'g.uid = u.uid')
+                ->join('g', 'forms_v2_forms', 'f', "jsonb_exists((f.access_json->'groups')::jsonb, g.gid)")
+                ->where('u.uid = :userId')
+                ->andWhere('expires = 0  or expires > extract(epoch from now())')
+                ->setParameter('userId', $userId);
+            return $query
+                ->execute()
+                ->fetchAll();
     }
 }

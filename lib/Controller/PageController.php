@@ -27,7 +27,25 @@ class PageController extends Controller {
 	 * @NoCSRFRequired
 	 */
 	public function index() {
-		return new TemplateResponse('assembly', 'index');  // templates/index.php
+		$data = $this->ReportMapper->getPoll($this->userId);
+		$responses = [];
+		$metadata['total'] = 0;
+		foreach ($data as $row) {
+			$responses[$row['response']] = $row['total'];
+			$metadata['total']+=$row['total'];
+		}
+		if($data){
+			$metadata['title'] = $data[0]['title'];
+		}else{
+			$metadata['total'] = 0;
+		}
+		return new TemplateResponse('assembly', 'content/index',
+			[
+				'responses'=>$responses,
+				'metadata'=>$metadata,
+				'data'=>$data
+			] );  // templates/report.php
+
 	}
 
 	/**

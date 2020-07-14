@@ -17,33 +17,6 @@ style('assembly', [
 ?>
 			
 <div id="explore">
-<div class="explore-feed grid-item" news-refresh-masonry="">
-			<div class="category-wrapper">
-				<div class="category">Assembléia geral PROUNI</div>
-			</div>
-			<div class="grid-item-content">
-				<div style="clear:both"></div>
-				<div class="explore-content">
-					<h3>Ambiente de assembléias online</h3>
-<br><br>
-<p>Acesse este ambiente no dia da assembléia para participar da sala de reunião e realizar as votações em pauta.</p>
-<br><br>
-<ul>
-<li>Primeira chamada às 15h30min</li>
-<li>Segunda chamada às 16h30min</li>
-<li>Última chamada às 17h30min</li>
-</ul>
-
-<p>Dia 23 de julho de 2020</p>
-
-					
-					
-				</div>
-
-			</div>
-		</div>
-<?php
-/*?>
 	<div class="grid">
 		<div class="explore-feed grid-item" news-refresh-masonry>
 			<div class="category-wrapper">
@@ -54,7 +27,7 @@ style('assembly', [
 			<div class="grid-item-content">
 				<div style="clear:both"></div>
 				<div class="explore-content">
-					<h3>Acesse a sala para participar da assembléia</h3>
+					<h3>Acesse para participar da assembléia</h3>
 
 					<div class="explore-logo">
 						<img ng-src="{{ entry.image }}" ng-if="entry.image">
@@ -71,21 +44,27 @@ style('assembly', [
 		<div class="explore-feed grid-item" news-refresh-masonry>
 			<div class="category-wrapper">
 				<div class="category">
-					Sala de votação
+					Votações
 				</div>
 			</div>
 			<div class="grid-item-content">
-				<div style="clear:both"></div>
-				<div class="explore-content">
-					<h3>Acesse a sala para votar</h3>
-
-					<div class="explore-logo">
-						<img ng-src="{{ entry.image }}" ng-if="entry.image">
-					</div>					
-					<div class="explore-subscribe">
-						<a class="button" href="https://tavola.lt.coop.br/apps/forms/m4KWw8FSW6CgsCHJ" target="_blank">Acessar</a>
+				<?php
+				if(!empty($data)){
+					foreach ($data as $row) { ?>
+						<div class="explore-content">
+							<div class="explore-value">
+								<div class="explore-subscribe">
+									<a class="button" href="/index.php/apps/forms/<?php echo $row['hash'];?>" target="_blank"><?php echo $row['title'];?></a>
+								</div>
+							</div>
+						</div>
+				<?php }
+				}else{ ?>
+					<div class="explore-content">
+						<h3>Nenhuma votação aberta ainda</h3>
 					</div>
-				</div>
+				<?php
+				} ?>
 			</div>
 		</div>
 	</div>	
@@ -112,6 +91,6 @@ style('assembly', [
 		</div>
 	</div>	
 <?php
-*/
+
 ?>
 </div>
