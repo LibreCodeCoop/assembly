@@ -10,7 +10,8 @@
 return [
     'routes' => [
        ['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
-       ['name' => 'page#report', 'url' => '/report', 'verb' => 'GET'],
+       ['name' => 'page#report', 'url' => '/report/{formId}', 'verb' => 'GET'],
+       ['name' => 'page#videocall', 'url' => '/videocall/{groupId}', 'verb' => 'GET'],
        ['name' => 'api#report', 'url' => '/api/v1/report', 'verb' => 'GET'],
        ['name' => 'api#usersAvailable', 'url' => '/api/v1/usersAvailable', 'verb' => 'GET'],
     ]

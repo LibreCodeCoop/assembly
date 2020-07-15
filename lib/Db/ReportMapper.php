@@ -85,6 +85,7 @@ class ReportMapper extends QBMapper
             $qb = $this->db->getQueryBuilder();
             $query = $qb->select('f.title')
                 ->selectAlias('f.hash', 'hash')
+                ->selectAlias('f.id', 'formId')
                 ->from('users', 'u')
                 ->join('u', 'group_user', 'g', 'g.uid = u.uid')
                 ->join('g', 'forms_v2_forms', 'f', "jsonb_exists((f.access_json->'groups')::jsonb, g.gid)")

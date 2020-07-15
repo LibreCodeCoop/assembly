@@ -1,22 +1,13 @@
 <?php
 
-
-script('assembly', [
-    'build/app.min'
-]);
-
-style('assembly', [
-    'result'
-]);
-
-
+style('assembly', 'result');
 ?>
 
 <div id="result">	
 	<div class="result-feed grid-item" news-refresh-masonry>		
 		<div class="category-wrapper">
 			<div class="category">
-				Resultado da votação <?php echo $metadata['title'];?>
+				Resultado <?php echo $metadata['title'];?>
 			</div>
 		</div>
 		<div class="grid">
