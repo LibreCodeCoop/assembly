@@ -57,10 +57,10 @@ class PageController extends Controller {
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */	
-	public function report($formId) {
+	public function report($formId, $groupId) {
 
 		$data = $this->ReportMapper->getResult($this->userId, $formId);
-		$available = $this->ReportMapper->usersAvailable();
+		$available = $this->ReportMapper->usersAvailable($groupId);
 		$responses = [];
 		$metadata['total'] = 0;
 		foreach ($data as $row) {
