@@ -63,16 +63,13 @@ class PageController extends Controller {
 		$available = $this->ReportMapper->usersAvailable($groupId);
 		$responses = [];
 		$metadata['total'] = 0;
+		$metadata['available'] = count($available);
 		foreach ($data as $row) {
 			$responses[$row['response']] = $row['total'];
 			$metadata['total']+=$row['total'];
 		}
 		if($data){
 			$metadata['title'] = $data[0]['title'];
-			$metadata['available'] = count($available);
-		}else{
-			$metadata['total'] = 0;
-			$metadata['available'] = 0;
 		}
 		return new TemplateResponse('assembly', 'content/report', 
 			[
