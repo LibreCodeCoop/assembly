@@ -22,7 +22,7 @@ class ReportMapper extends QBMapper
             ->selectAlias('a.text', 'response')
             ->selectAlias($qb->func()->count('*'), 'total')
             ->from('forms_v2_forms', 'f')
-            ->join('f', 'forms_v2_questions', 'q', 'f.id = q.form_id')
+            ->join('f', 'forms_v2_questions', 'q', 'f.id = q.form_id AND q.order > 0')
             ->join('f', 'forms_v2_submissions', 's', 's.form_id = f.id')
             ->leftJoin('q', 'forms_v2_answers', 'a', 'a.submission_id =s.id')
             ->where('f.id = :formId')
