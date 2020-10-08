@@ -110,10 +110,6 @@ class BbbRegistry extends Base {
 			$output->writeln('Invalid date.');
 			return 1;
 		}
-		if ($date < (new \DateTime())) {
-			$output->writeln('Inform a date greater than now.');
-			return 1;
-		}
 
 		$body = $this->formatBody($date->format('Y-m-d\TH:i:s'), $group);
 		$client = $this->clientService->newClient();
