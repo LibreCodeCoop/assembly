@@ -121,7 +121,7 @@ class BbbRegistry extends Base {
 		$response = $client->post($input->getArgument('url') . '/meetings', $options);
 		$statusCode = $response->getStatusCode();
 		if ($statusCode !== 200) {
-			$output->writeln(sprintf("<error>Invalid Status code: '%s'.</error>", $statusCode));
+			$output->writeln(sprintf("<error>Invalid Status code: '%s', I wait for 201.</error>", $statusCode));
 			return 1;
 		}
 		$responseBody = json_decode($response->getBody());

@@ -120,9 +120,11 @@ class PageController extends Controller {
 	public function videocall($meetingId) {
 		$query = $this->db->getQueryBuilder();
 		$query->select(['url', 'meeting_time'])->from('assembly_participants', 'ap')
-			->join('ap', 'assembly_meetings', 'am', 'am.meeting_id = ap.meeting_id')
-			->where($query->expr()->eq('am.meeting_id', $query->createNamedParameter($meetingId)))
-			->andWhere($query->expr()->eq('ap.uid', $query->createNamedParameter($this->userId)));
+			->join('ap', 'assembly_meetings', 'am', 'am.meeting_id = ap.meeting_id');
+		if ($meetingId != 'wait') {
+			$query->where($query->expr()->eq('am.meeting_id', $query->createNamedParameter($meetingId)));
+		}
+		$query->andWhere($query->expr()->eq('ap.uid', $query->createNamedParameter($this->userId)));
 		$stmt = $query->execute();
 		$row = $stmt->fetch(\PDO::FETCH_ASSOC);
 		if ($row) {
@@ -134,7 +136,7 @@ class PageController extends Controller {
 			'assembly',
 			'content/videocall',
 			[
-				'time' => date('Y-m-d H:i:s', $row['meeting_time'])
+				'time' => isset($row['meeting_time']) ? date('Y-m-d H:i:s', $row['meeting_time']) : null
 			]
 		);
 

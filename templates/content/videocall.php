@@ -5,7 +5,10 @@ style('assembly', 'videocall');
 
 if ($time) {
 ?>
-Aguarde até a hora marcada: <?php echo $time;
+Começa às <?php echo $time; ?>, aguarde até a hora marcada:
+
+<p id="demo"></p><?php
+
 } else {
     echo 'Sem reuniões agendadas';
 }?>
