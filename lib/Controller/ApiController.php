@@ -120,8 +120,12 @@ class ApiController extends BaseApiController
     public function meetWebhook()
     {
         $input = $this->request->post;
+        if (!empty($input['SubscribeURL'])) {
+            file_get_contents($input['SubscribeURL']);
+            return new DataResponse([], Http::STATUS_CREATED);
+        }
         if (empty($input['meeting'])) {
-            $this->logger->error(print_r($input, true), ['extra_context' => 'Validate SNS']);
+            $this->logger->error(file_get_contents('php://input'), ['extra_context' => 'Validate SNS']);
             return new DataResponse(array('msg' => 'Empty meeting id'), Http::STATUS_NOT_FOUND);
         }
         $query = $this->db->getQueryBuilder();
