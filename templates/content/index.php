@@ -9,7 +9,7 @@ style('assembly','explore',);
 		<div class="explore-feed grid-item" news-refresh-masonry>
 			<div class="category-wrapper">
 				<div class="category">
-					Assembléia online
+					Assembleia online
 				</div>
 			</div>
 			<div class="grid-item-content">
