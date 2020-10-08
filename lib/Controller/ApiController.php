@@ -134,6 +134,7 @@ class ApiController extends BaseApiController
         $stmt = $query->execute();
         $exist = $stmt->fetch(\PDO::FETCH_ASSOC);
         if (!$exist) {
+            $this->logger->error(file_get_contents('php://input'), ['extra_context' => 'Invalid meeting id']);
             return new DataResponse(array('msg' => 'Invalid meeting id'), Http::STATUS_NOT_FOUND);
         }
         $insert = $this->db->getQueryBuilder();
