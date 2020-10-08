@@ -1,17 +1,23 @@
 <?php
 namespace OCA\Assembly\Controller;
 
+use OC\AppFramework\Services\AppConfig;
 use OCA\Assembly\Db\ReportMapper;
 use OCP\IRequest;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
+use OCP\AppFramework\Services\IAppConfig;
+use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\IUser;
 use OCP\IUserSession;
 
 class PageController extends Controller {
+    /** @var IDBConnection */
+	protected $db;
+
 	private $userId;
 	/** @var IGroupManager */
 	protected $groupManager;
@@ -19,12 +25,24 @@ class PageController extends Controller {
 	/** @var IUserSession */
 	protected $userSession;
 
-	public function __construct($AppName, IRequest $request, $UserId, ReportMapper $ReportMapper, IGroupManager $groupManager, IUserSession $userSession){
+	/** @var AppConfig */
+	protected $appConfig;
+
+	public function __construct(string $AppName,
+								IRequest $request,
+								string $UserId,
+								ReportMapper $ReportMapper,
+								IGroupManager $groupManager,
+								IUserSession $userSession,
+								IAppConfig $appConfig,
+								IDBConnection $db) {
 		parent::__construct($AppName, $request);
 		$this->userId = $UserId;
 		$this->groupManager = $groupManager;
 		$this->ReportMapper =  $ReportMapper;
 		$this->userSession = $userSession;
+		$this->appConfig = $appConfig;
+		$this->db = $db;
 	}
 
 	/**
@@ -38,6 +56,7 @@ class PageController extends Controller {
 	 * @NoCSRFRequired
 	 */
 	public function index() {
+		$enableMutesi = $this->appConfig->getAppValue('enable_mutesi');
 		$user = $this->userSession->getUser();
 		if ($user instanceof IUser) {
 			$groups = $this->groupManager->getUserGroupIds($this->userSession->getUser());
@@ -45,10 +64,23 @@ class PageController extends Controller {
 			$groups = [];
 		}
 		$data = $this->ReportMapper->getPoll($this->userId);
+		if ($this->appConfig->getAppValue('enable_mutesi')) {
+			$query = $this->db->getQueryBuilder();
+			$query->select(['url'])->from('assembly_participants')
+					->where($query->expr()->eq('uid', $query->createNamedParameter($user->getUID())));
+			$stmt = $query->execute();
+			$meetUrl = $stmt->fetch(\PDO::FETCH_ASSOC);
+			if ($meetUrl) {
+				$meetUrl = $meetUrl['url'];
+			}
+		} else {
+			$meetUrl = 'https://meet.jit.si/' . date('Ymd') . $groups[0];
+		}
 		return new TemplateResponse('assembly', 'content/index',
 			[
 				'data'=>$data,
-				'group'=>$groups
+				'group'=>$groups,
+				'meetUrl' => $meetUrl
 			] );  // templates/report.php
 
 	}
@@ -82,18 +114,21 @@ class PageController extends Controller {
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
-	public function videocall($groupId) {
+	public function videocall($meetingId) {
+		$query = $this->db->getQueryBuilder();
+		$query->select(['url'])->from('assembly_participants')
+				->where($query->expr()->eq('meeting_id', $query->createNamedParameter($meetingId)))
+				->andWhere($query->expr()->eq('uid', $query->createNamedParameter($this->userId)));
+		$stmt = $query->execute();
+		$meetUrl = $stmt->fetch(\PDO::FETCH_ASSOC);
+		if ($meetUrl) {
+			$meetUrl = $meetUrl['url'];
+		}
 		$response =  new TemplateResponse('assembly', 'content/videocall',
 			[
-				'group'=>$groupId
+				'url' => $meetUrl ?? null
 			] );  // templates/report.php
 
-			$policy = new ContentSecurityPolicy();
-			$policy->addAllowedChildSrcDomain('*');
-			$policy->addAllowedFrameDomain('*');
-			$response->setContentSecurityPolicy($policy);
-
-			return $response;
-
+		return $response;
 	}
 }

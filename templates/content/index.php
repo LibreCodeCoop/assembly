@@ -16,7 +16,7 @@ style('assembly','explore',);
 				<div class="explore-content">
 					<div class="explore-value">
 						<div class="explore-subscribe">
-							<a class="button" href="https://meet.jit.si/<?php echo date('Ymd').$group[0]; ?>" target="_blank">Acessar sala</a>
+							<a class="button" href="<?php echo $meetUrl; ?>" target="_blank">Acessar sala</a>
 						</div>
 					</div>
 				</div>

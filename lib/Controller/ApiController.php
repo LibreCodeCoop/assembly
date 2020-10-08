@@ -15,10 +15,15 @@
 
 namespace OCA\Assembly\Controller;
 
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use OCA\Assembly\Db\ReportMapper;
 use \OCP\IRequest;
 use \OCP\IUserSession;
 use \OCP\AppFramework\ApiController as BaseApiController;
+use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\DataResponse;
+use OCP\IDBConnection;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class ApiController
@@ -27,6 +32,10 @@ use \OCP\AppFramework\ApiController as BaseApiController;
  */
 class ApiController extends BaseApiController
 {
+    /** @var IDBConnection */
+    protected $db;
+    /** @var LoggerInterface */
+    protected $logger;
     /**
      * @var IUserSession
      */
@@ -47,11 +56,18 @@ class ApiController extends BaseApiController
      * @param IRequest      $request        The request
      * @param IUserSession  $userSession    The user session
      */
-    public function __construct($appName, IRequest $request, IUserSession $userSession, ReportMapper $ReportMapper)
+    public function __construct($appName,
+                            IRequest $request,
+                            IUserSession $userSession,
+                            ReportMapper $ReportMapper,
+                            IDBConnection $db,
+                            LoggerInterface $logger)
     {
         parent::__construct($appName, $request);
         $this->userSession = $userSession;
         $this->ReportMapper =  $ReportMapper;
+        $this->db = $db;
+        $this->logger = $logger;
     }
 
     /**
@@ -92,5 +108,44 @@ class ApiController extends BaseApiController
     public function usersAvailable($groupId)
     {
         return $this->ReportMapper->usersAvailable($groupId);
+    }
+
+    /**
+     * @PublicPage
+     * @NoCSRFRequired
+     * @CORS
+     *
+     * @return array
+     */
+    public function meetWebhook()
+    {
+        $input = $this->request->post;
+        if (empty($input['meeting'])) {
+            $this->logger->error(print_r($input, true), ['extra_context' => 'Validate SNS']);
+            return new DataResponse(array('msg' => 'Empty meeting id'), Http::STATUS_NOT_FOUND);
+        }
+        $query = $this->db->getQueryBuilder();
+        $query->select(['meeting_id'])->from('assembly_meetings')
+                ->where($query->expr()->eq('meeting_id', $query->createNamedParameter($input['meeting'])));
+        $stmt = $query->execute();
+        $exist = $stmt->fetch(\PDO::FETCH_ASSOC);
+        if (!$exist) {
+            return new DataResponse(array('msg' => 'Invalid meeting id'), Http::STATUS_NOT_FOUND);
+        }
+        $insert = $this->db->getQueryBuilder();
+        try {
+            $insert->insert('assembly_participants')
+                ->values([
+                    'meeting_id' => $insert->createNamedParameter($input['meeting']),
+                    'url' => $insert->createNamedParameter($input['url']),
+                    'uid' => $insert->createNamedParameter($input['attendee']),
+                    'password' => $insert->createNamedParameter($input['password'] ?? null),
+                    'created_at' => $insert->createNamedParameter(time())
+                ])
+                ->execute();
+        } catch (UniqueConstraintViolationException $e) {
+            return new DataResponse(array('msg' => 'Participant already registered.'), Http::STATUS_FORBIDDEN);
+        }
+        return new DataResponse(array('msg' => 'Success'), Http::STATUS_CREATED);
     }
 }
