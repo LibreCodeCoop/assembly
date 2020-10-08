@@ -71,7 +71,7 @@ class BbbRegistry extends Base {
 				'start',
 				InputArgument::REQUIRED,
 				'Start time in format Y-m-d\TH:i:s, example 2020-09-15T17:45:00',
-				null
+				date('Y-m-d\TH:i:s')
 			)
 			->addOption(
 				'output',
