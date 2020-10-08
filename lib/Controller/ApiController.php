@@ -124,6 +124,12 @@ class ApiController extends BaseApiController
             file_get_contents($input['SubscribeURL']);
             return new DataResponse([], Http::STATUS_CREATED);
         }
+        if (count($input) <=2) {
+            $input = json_decode(file_get_contents('php://input'), true);
+            if (!count($input)) {
+                return new DataResponse(array('msg' => 'Invalid JSON'), Http::STATUS_NOT_FOUND);
+            }
+        }
         if (empty($input['meeting'])) {
             $this->logger->error('Empty meeting id: ' . file_get_contents('php://input'), ['extra_context' => 'Validate SNS']);
             return new DataResponse(array('msg' => 'Empty meeting id'), Http::STATUS_NOT_FOUND);
