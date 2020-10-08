@@ -56,7 +56,6 @@ class PageController extends Controller {
 	 * @NoCSRFRequired
 	 */
 	public function index() {
-		$enableMutesi = $this->appConfig->getAppValue('enable_mutesi');
 		$user = $this->userSession->getUser();
 		if ($user instanceof IUser) {
 			$groups = $this->groupManager->getUserGroupIds($this->userSession->getUser());
@@ -66,22 +65,26 @@ class PageController extends Controller {
 		$data = $this->ReportMapper->getPoll($this->userId);
 		if ($this->appConfig->getAppValue('enable_mutesi')) {
 			$query = $this->db->getQueryBuilder();
-			$query->select(['url'])->from('assembly_participants')
-					->where($query->expr()->eq('uid', $query->createNamedParameter($user->getUID())));
+			$query->select(['url', 'meeting_time'])->from('assembly_participants', 'ap')
+				->join('ap', 'assembly_meetings', 'am', 'am.meeting_id = ap.meeting_id')
+				->where($query->expr()->eq('ap.uid', $query->createNamedParameter($this->userId)));
 			$stmt = $query->execute();
-			$meetUrl = $stmt->fetch(\PDO::FETCH_ASSOC);
-			if ($meetUrl) {
-				$meetUrl = $meetUrl['url'];
+			$row = $stmt->fetch(\PDO::FETCH_ASSOC);
+			if ($row && $row['meeting_time'] < time()) {
+				$meetUrl = $row['url'];
+			} else {
+				$meetUrl = '/index.php/apps/assembly/videocall/' . ($row['meeting_id'] ?? 'wait');
 			}
 		} else {
 			$meetUrl = 'https://meet.jit.si/' . date('Ymd') . $groups[0];
 		}
 		return new TemplateResponse('assembly', 'content/index',
 			[
-				'data'=>$data,
-				'group'=>$groups,
+				'data' => $data,
+				'group' => $groups,
 				'meetUrl' => $meetUrl
-			] );  // templates/report.php
+			]
+		);  // templates/report.php
 
 	}
 
@@ -116,18 +119,24 @@ class PageController extends Controller {
 	 */
 	public function videocall($meetingId) {
 		$query = $this->db->getQueryBuilder();
-		$query->select(['url'])->from('assembly_participants')
-				->where($query->expr()->eq('meeting_id', $query->createNamedParameter($meetingId)))
-				->andWhere($query->expr()->eq('uid', $query->createNamedParameter($this->userId)));
+		$query->select(['url', 'meeting_time'])->from('assembly_participants', 'ap')
+			->join('ap', 'assembly_meetings', 'am', 'am.meeting_id = ap.meeting_id')
+			->where($query->expr()->eq('am.meeting_id', $query->createNamedParameter($meetingId)))
+			->andWhere($query->expr()->eq('ap.uid', $query->createNamedParameter($this->userId)));
 		$stmt = $query->execute();
-		$meetUrl = $stmt->fetch(\PDO::FETCH_ASSOC);
-		if ($meetUrl) {
-			$meetUrl = $meetUrl['url'];
+		$row = $stmt->fetch(\PDO::FETCH_ASSOC);
+		if ($row) {
+			if ($row['meeting_time'] < time()) {
+				header('Location: ' . $row['url']);
+			}
 		}
-		$response =  new TemplateResponse('assembly', 'content/videocall',
+		$response =  new TemplateResponse(
+			'assembly',
+			'content/videocall',
 			[
-				'url' => $meetUrl ?? null
-			] );  // templates/report.php
+				'time' => date('Y-m-d H:i:s', $row['meeting_time'])
+			]
+		);
 
 		return $response;
 	}
