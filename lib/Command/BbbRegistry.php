@@ -67,15 +67,16 @@ class BbbRegistry extends Base {
 				'The base URL',
 				null
 			)
-			->addArgument(
+			->addOption(
 				'start',
-				InputArgument::REQUIRED,
+				's',
+				InputOption::VALUE_OPTIONAL,
 				'Start time in format Y-m-d\TH:i:s, example 2020-09-15T17:45:00',
 				date('Y-m-d\TH:i:s')
 			)
 			->addOption(
 				'output',
-				null,
+				'o',
 				InputOption::VALUE_OPTIONAL,
 				'Output format (plain, json or json_pretty, default is plain)',
 				$this->defaultOutputFormat
@@ -104,7 +105,7 @@ class BbbRegistry extends Base {
 		}
 		$group = array_values($group)[0];
 
-		$date = \DateTime::createFromFormat('Y-m-d\TH:i:s', $input->getArgument('start'));
+		$date = \DateTime::createFromFormat('Y-m-d\TH:i:s', $input->getOption('start'));
 		if (!$date) {
 			$output->writeln('Invalid date.');
 			return 1;
