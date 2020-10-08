@@ -125,7 +125,7 @@ class ApiController extends BaseApiController
             return new DataResponse([], Http::STATUS_CREATED);
         }
         if (empty($input['meeting'])) {
-            $this->logger->error(file_get_contents('php://input'), ['extra_context' => 'Validate SNS']);
+            $this->logger->error('Empty meeting id: ' . file_get_contents('php://input'), ['extra_context' => 'Validate SNS']);
             return new DataResponse(array('msg' => 'Empty meeting id'), Http::STATUS_NOT_FOUND);
         }
         $query = $this->db->getQueryBuilder();
@@ -134,7 +134,7 @@ class ApiController extends BaseApiController
         $stmt = $query->execute();
         $exist = $stmt->fetch(\PDO::FETCH_ASSOC);
         if (!$exist) {
-            $this->logger->error(file_get_contents('php://input'), ['extra_context' => 'Invalid meeting id']);
+            $this->logger->error('Invalid meeting id: '. file_get_contents('php://input'), ['extra_context' => 'Invalid meeting id']);
             return new DataResponse(array('msg' => 'Invalid meeting id'), Http::STATUS_NOT_FOUND);
         }
         $insert = $this->db->getQueryBuilder();
@@ -149,6 +149,7 @@ class ApiController extends BaseApiController
                 ])
                 ->execute();
         } catch (UniqueConstraintViolationException $e) {
+            $this->logger->error('Query error: ' . $e->getMessage(), ['extra_context' => 'Validate SNS']);
             return new DataResponse(array('msg' => 'Participant already registered.'), Http::STATUS_FORBIDDEN);
         }
         return new DataResponse(array('msg' => 'Success'), Http::STATUS_CREATED);

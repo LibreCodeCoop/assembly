@@ -144,7 +144,7 @@ class BbbRegistry extends Base {
 		}
 		$output->writeln(sprintf('Success! Transaction ID: <info>%s</info>', $responseBody->id));
 		$output->writeln('Request body:');
-		$this->writeArrayInOutputFormat($input, $output, $body);
+		$this->writeArrayInOutputFormat($input, $output, $options);
 		return 0;
 	}
 
