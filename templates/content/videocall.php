@@ -3,5 +3,9 @@
 script('assembly', 'videocall');
 style('assembly', 'videocall');
 
+if ($time) {
 ?>
-<iframe id="ifm" src="https://meet.jit.si/<?php echo $group;?>" allowfullscreen></iframe>
+Aguarde até a hora marcada: <?php echo $time;
+} else {
+    echo 'Sem reuniões agendadas';
+}?>
