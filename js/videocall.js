@@ -20,10 +20,12 @@ $(document).ready(function () {
 	var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
 	var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
 	var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+	var milliseconds = Math.floor((distance %))
+
 
 	// Display the result in the element with id="countdown"
 	document.getElementById("countdown").innerHTML = days + "d " + hours + "h "
-	+ minutes + "m " + seconds + "s ";
+	+ minutes + "m " + seconds + "s " + milliseconds + "ms";
 
 	// If the count down is finished, write some text
 	if (distance < 0) {
