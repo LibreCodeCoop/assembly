@@ -22,24 +22,12 @@
  */
 namespace OCA\Assembly\Migration;
 
-use Doctrine\DBAL\Types\Types;
-use OCP\AppFramework\Services\IAppConfig;
+use Doctrine\DBAL\Types\Type;
 use OCP\DB\ISchemaWrapper;
-use OCP\IDBConnection;
 use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
 
 class Version1000Date20201007135900 extends SimpleMigrationStep {
-
-	/** @var IDBConnection */
-	protected $connection;
-
-	public function __construct(IDBConnection $connection,
-								IAppConfig $appConfig) {
-		$this->connection = $connection;
-		$this->appConfig = $appConfig;
-	}
-
 	/**
 	 * @param IOutput $output
 	 * @param \Closure $schemaClosure The `\Closure` returns a `ISchemaWrapper`
@@ -75,25 +63,25 @@ class Version1000Date20201007135900 extends SimpleMigrationStep {
 
 		if (!$schema->hasTable('assembly_participants')) {
 			$table = $schema->createTable('assembly_participants');
-			$table->addColumn('id', Types::INTEGER, [
+			$table->addColumn('id', Type::INTEGER, [
 				'autoincrement' => true,
 				'notnull' => true,
 			]);
-			$table->addColumn('meeting_id', Types::STRING, [
+			$table->addColumn('meeting_id', Type::STRING, [
 				'notnull' => true,
 			]);
-			$table->addColumn('uid', Types::STRING, [
+			$table->addColumn('uid', Type::STRING, [
 				'notnull' => true,
 				'length' => 64,
 			]);
-			$table->addColumn('url', Types::STRING, [
+			$table->addColumn('url', Type::STRING, [
 				'notnull' => true,
 				'length' => 512,
 			]);
-			$table->addColumn('password', Types::STRING, [
+			$table->addColumn('password', Type::STRING, [
 				'length' => 256,
 			]);
-			$table->addColumn('created_at', Types::INTEGER, [
+			$table->addColumn('created_at', Type::INTEGER, [
 				'notnull' => true,
 				'length' => 4,
 				'default' => 0,
