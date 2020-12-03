@@ -12,126 +12,126 @@
  * result styles
  */
 .result #app-content-wrapper {
-    height: 100%;
+	height: 100%;
 }
 
 #result {
-    height: 100%;
-    width: 100%;
-    padding: 45px 0 45px 45px;
+	height: 100%;
+	width: 100%;
+	padding: 45px 0 45px 45px;
 }
 
 
 #result .grid-item {
-    border-collapse: collapse;
-    border: 1px solid #ccc;
-    position: relative;
-    width: 98%;
+	border-collapse: collapse;
+	border: 1px solid #ccc;
+	position: relative;
+	width: 98%;
 }
 
 #result h1 {
-    font-size: 23px;
+	font-size: 23px;
 }
 
 #result h1 a {
-    word-wrap: break-word;
+	word-wrap: break-word;
 }
 
 #result h1 a:hover {
-    text-decoration: underline;
+	text-decoration: underline;
 }
 
 #result .category-wrapper {
-    text-align: center;
+	text-align: center;
 }
 
 #result .category {
-    font-weight: normal;
-    font-size: 10pt;
-    color: var(--color-primary-text);
-    background-color: var(--color-primary);
-    padding: 10px;
-    font-weight: bold;
+	font-weight: normal;
+	font-size: 10pt;
+	color: var(--color-primary-text);
+	background-color: var(--color-primary);
+	padding: 10px;
+	font-weight: bold;
 }
 
 #result .grid{
-    display: table;
-    width: 100%;
+	display: table;
+	width: 100%;
 }
 
 #result .grid-item-content {
-    padding: 30px;
-    background: #F8F8F8;
-    border: 1px solid #A9A9A9;
-    width: 30%;
-    float: left;
-    margin: 20px;
+	padding: 30px;
+	background: #F8F8F8;
+	border: 1px solid #A9A9A9;
+	width: 30%;
+	float: left;
+	margin: 20px;
     
 }
 
 #result .grid-item-content-half {
-    padding: 30px;
-    background: #F8F8F8;
-    border: 1px solid #A9A9A9;
-    width: 45%;
-    float: left;
-    margin: 25px;
+	padding: 30px;
+	background: #F8F8F8;
+	border: 1px solid #A9A9A9;
+	width: 45%;
+	float: left;
+	margin: 25px;
     
 }
 
 #result .result-value {
-    text-align: center;
-    margin-top: 25px;
+	text-align: center;
+	margin-top: 25px;
 }
 
 #result .result-value h3 {
-    font-size: 40px;
-    color: #0082c9;
-    font-weight: bold;
+	font-size: 40px;
+	color: #0082c9;
+	font-weight: bold;
 } 
 
 #result .result-value img {
-    width: 100%;
+	width: 100%;
 }
 
 #result .result-subscribe {
-    padding-top: 15px;
-    text-align: center;
+	padding-top: 15px;
+	text-align: center;
 }
 
 #result .result-subscribe .button{
-    padding:10px;    
+	padding:10px;    
 }
 
 #result .result-content {
-    padding-top: 25px;
-    text-align: center;
+	padding-top: 25px;
+	text-align: center;
 }
 
 #result .result-filter {
-    text-align: right;
-    padding: 0 30px 30px;
+	text-align: right;
+	padding: 0 30px 30px;
 }
 
 #result .result-filter input,
 #result .result-filter select {
-    margin-left: 10px;
-    display: inline-block;
+	margin-left: 10px;
+	display: inline-block;
 }
 
 #result .result-filter input {
-    width: 200px;
+	width: 200px;
 }
 
 #result .result-footer {
-    clear: both;
-    margin: 75px 0;
-    text-align: center;
+	clear: both;
+	margin: 75px 0;
+	text-align: center;
 }
 
 #result .result-footer a {
-    font-size: 11pt;
-    color: #0000AA;
-    text-decoration: underline;
+	font-size: 11pt;
+	color: #0000AA;
+	text-decoration: underline;
 }
 

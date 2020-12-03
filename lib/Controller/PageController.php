@@ -11,6 +11,8 @@ use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\IUser;
 use OCP\IUserSession;
+use OCP\Util;
+use OCP\AppFramework\Http\ContentSecurityPolicy;
 
 class PageController extends Controller {
 	/** @var IDBConnection */
@@ -28,7 +30,7 @@ class PageController extends Controller {
 
 	public function __construct(string $AppName,
 								IRequest $request,
-								string $UserId,
+								string $UserId = null,
 								ReportMapper $ReportMapper,
 								IGroupManager $groupManager,
 								IUserSession $userSession,
@@ -76,13 +78,24 @@ class PageController extends Controller {
 		} else {
 			$meetUrl = 'https://meet.jit.si/' . date('Ymd') . $groups[0];
 		}
-		return new TemplateResponse('assembly', 'content/index',
+		
+
+
+		Util::addScript('assembly', 'assembly-main');
+		$response = new TemplateResponse('assembly', 'content/main',
 			[
 				'data' => $data,
 				'group' => $groups,
 				'meetUrl' => $meetUrl
 			]
-		);  // templates/report.php
+		);
+
+		$csp = new ContentSecurityPolicy();
+		$csp->allowInlineScript(true);
+		$response->setContentSecurityPolicy($csp);
+
+		return $response;
+		// templates/report.php
 	}
 
 	/**
