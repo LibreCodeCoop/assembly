@@ -1,21 +1,19 @@
 <?php
+
 namespace OCA\Assembly\Controller;
 
-use OC\AppFramework\Services\AppConfig;
 use OCA\Assembly\Db\ReportMapper;
 use OCP\IRequest;
 use OCP\AppFramework\Http\TemplateResponse;
-use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Controller;
-use OCP\AppFramework\Http\ContentSecurityPolicy;
-use OCP\AppFramework\Services\IAppConfig;
+use OCP\IAppConfig;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\IUser;
 use OCP\IUserSession;
 
 class PageController extends Controller {
-    /** @var IDBConnection */
+	/** @var IDBConnection */
 	protected $db;
 
 	private $userId;
@@ -25,7 +23,7 @@ class PageController extends Controller {
 	/** @var IUserSession */
 	protected $userSession;
 
-	/** @var AppConfig */
+	/** @var IAppConfig */
 	protected $appConfig;
 
 	public function __construct(string $AppName,
@@ -39,7 +37,7 @@ class PageController extends Controller {
 		parent::__construct($AppName, $request);
 		$this->userId = $UserId;
 		$this->groupManager = $groupManager;
-		$this->ReportMapper =  $ReportMapper;
+		$this->ReportMapper = $ReportMapper;
 		$this->userSession = $userSession;
 		$this->appConfig = $appConfig;
 		$this->db = $db;
@@ -63,7 +61,7 @@ class PageController extends Controller {
 			$groups = [];
 		}
 		$data = $this->ReportMapper->getPoll($this->userId);
-		if ($this->appConfig->getAppValue('enable_mutesi')) {
+		if ($this->appConfig->getValues('assembly', 'enable_mutesi')) {
 			$query = $this->db->getQueryBuilder();
 			$query->select(['url', 'meeting_time'])->from('assembly_participants', 'ap')
 				->join('ap', 'assembly_meetings', 'am', 'am.meeting_id = ap.meeting_id')
@@ -85,15 +83,13 @@ class PageController extends Controller {
 				'meetUrl' => $meetUrl
 			]
 		);  // templates/report.php
-
 	}
 
 	/**
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
-	 */	
+	 */
 	public function report($formId, $groupId) {
-
 		$data = $this->ReportMapper->getResult($this->userId, $formId);
 		$available = $this->ReportMapper->usersAvailable($groupId);
 		$responses = [];
@@ -101,17 +97,17 @@ class PageController extends Controller {
 		$metadata['available'] = count($available);
 		foreach ($data as $row) {
 			$responses[$row['response']] = $row['total'];
-			$metadata['total']+=$row['total'];
+			$metadata['total'] += $row['total'];
 		}
-		if($data){
+		if ($data) {
 			$metadata['title'] = $data[0]['title'];
 		}
-		return new TemplateResponse('assembly', 'content/report', 
+		return new TemplateResponse('assembly', 'content/report',
 			[
-				'responses'=>$responses,
-				'metadata'=>$metadata
-			] );  // templates/report.php
-	}	
+				'responses' => $responses,
+				'metadata' => $metadata
+			]);  // templates/report.php
+	}
 
 	/**
 	 * @NoAdminRequired
@@ -132,7 +128,7 @@ class PageController extends Controller {
 				header('Location: ' . $row['url']);
 			}
 		}
-		$response =  new TemplateResponse(
+		$response = new TemplateResponse(
 			'assembly',
 			'content/videocall',
 			[
