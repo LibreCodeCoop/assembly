@@ -2,6 +2,7 @@
 
 namespace OCA\Assembly\Controller;
 
+use OCA\Assembly\AppInfo\Application;
 use OCA\Assembly\Db\ReportMapper;
 use OCP\IRequest;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -11,6 +12,9 @@ use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\IUser;
 use OCP\IUserSession;
+use OCP\Util;
+use OCP\AppFramework\Http\ContentSecurityPolicy;
+use OCP\IConfig;
 
 class PageController extends Controller {
 	/** @var IDBConnection */
@@ -26,21 +30,26 @@ class PageController extends Controller {
 	/** @var IAppConfig */
 	protected $appConfig;
 
-	public function __construct(string $AppName,
-								IRequest $request,
-								string $UserId,
+	/** @var IConfig */
+	protected $systemConfig;
+
+	public function __construct(IRequest $request,
+								string $UserId = null,
 								ReportMapper $ReportMapper,
 								IGroupManager $groupManager,
 								IUserSession $userSession,
 								IAppConfig $appConfig,
-								IDBConnection $db) {
-		parent::__construct($AppName, $request);
+								IDBConnection $db,
+								IConfig $systemConfig
+	) {
+		parent::__construct(Application::APP_ID, $request);
 		$this->userId = $UserId;
 		$this->groupManager = $groupManager;
 		$this->ReportMapper = $ReportMapper;
 		$this->userSession = $userSession;
 		$this->appConfig = $appConfig;
 		$this->db = $db;
+		$this->config = $systemConfig;
 	}
 
 	/**
@@ -76,13 +85,16 @@ class PageController extends Controller {
 		} else {
 			$meetUrl = 'https://meet.jit.si/' . date('Ymd') . $groups[0];
 		}
-		return new TemplateResponse('assembly', 'content/index',
+
+		Util::addScript(Application::APP_ID, 'assembly-main');
+		return $this->renderTemplate(
+			'content/main',
 			[
 				'data' => $data,
 				'group' => $groups,
 				'meetUrl' => $meetUrl
 			]
-		);  // templates/report.php
+		);
 	}
 
 	/**
@@ -102,11 +114,14 @@ class PageController extends Controller {
 		if ($data) {
 			$metadata['title'] = $data[0]['title'];
 		}
-		return new TemplateResponse('assembly', 'content/report',
+
+		return $this->renderTemplate(
+			'content/report',
 			[
 				'responses' => $responses,
 				'metadata' => $metadata
-			]);  // templates/report.php
+			]
+		);  // templates/report.php
 	}
 
 	/**
@@ -128,14 +143,24 @@ class PageController extends Controller {
 				header('Location: ' . $row['url']);
 			}
 		}
-		$response = new TemplateResponse(
-			'assembly',
+
+		return $this->renderTemplate(
 			'content/videocall',
 			[
 				'time' => isset($row['meeting_time']) ? date('Y-m-d H:i:s', $row['meeting_time']) : null
 			]
 		);
+	}
 
+	private function renderTemplate(string $template, array $templateData = []) {
+		$response = new TemplateResponse(Application::APP_ID, $template, $templateData);
+
+		if ($this->config->getSystemValue('debug')) {
+			$csp = new ContentSecurityPolicy();
+			$csp->allowInlineScript(true);
+			$response->setContentSecurityPolicy($csp);
+		}
+		
 		return $response;
 	}
 }
