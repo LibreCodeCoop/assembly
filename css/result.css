@@ -21,7 +21,6 @@
 	padding: 45px 0 45px 45px;
 }
 
-
 #result .grid-item {
 	border-collapse: collapse;
 	border: 1px solid #ccc;
@@ -46,7 +45,6 @@
 }
 
 #result .category {
-	font-weight: normal;
 	font-size: 10pt;
 	color: var(--color-primary-text);
 	background-color: var(--color-primary);
@@ -54,29 +52,27 @@
 	font-weight: bold;
 }
 
-#result .grid{
+#result .grid {
 	display: table;
 	width: 100%;
 }
 
 #result .grid-item-content {
 	padding: 30px;
-	background: #F8F8F8;
-	border: 1px solid #A9A9A9;
+	background: #f8f8f8;
+	border: 1px solid #a9a9a9;
 	width: 30%;
 	float: left;
 	margin: 20px;
-    
 }
 
 #result .grid-item-content-half {
 	padding: 30px;
-	background: #F8F8F8;
-	border: 1px solid #A9A9A9;
+	background: #f8f8f8;
+	border: 1px solid #a9a9a9;
 	width: 45%;
 	float: left;
 	margin: 25px;
-    
 }
 
 #result .result-value {
@@ -88,7 +84,7 @@
 	font-size: 40px;
 	color: #0082c9;
 	font-weight: bold;
-} 
+}
 
 #result .result-value img {
 	width: 100%;
@@ -99,8 +95,8 @@
 	text-align: center;
 }
 
-#result .result-subscribe .button{
-	padding:10px;    
+#result .result-subscribe .button {
+	padding: 10px;
 }
 
 #result .result-content {
@@ -131,7 +127,6 @@
 
 #result .result-footer a {
 	font-size: 11pt;
-	color: #0000AA;
+	color: #0000aa;
 	text-decoration: underline;
 }
-

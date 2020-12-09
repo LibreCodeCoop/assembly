@@ -31,10 +31,6 @@
 	background-position: 14px center;
 }
 
-#app-navigation .add-new .heading button {
-}
-
-
 /* actual form content */
 #app-navigation .add-new-popup {
 	display: none;
@@ -43,7 +39,6 @@
 	border-top: 1px solid var(--color-border-dark);
 	border-bottom: 1px solid var(--color-border-dark);
 }
-
 
 #app-navigation input.ng-invalid {
 	border: 1px solid var(--color-error);
@@ -100,14 +95,13 @@
 .icon-full-text-enabled {
 	background-image: url('../img/fulltext.svg');
 	background-size: 50%;
-	opacity: .5;
+	opacity: 0.5;
 }
-
 
 .icon-full-text-disabled {
 	background-image: url('../img/nonfulltext.svg');
 	background-size: 50%;
-	opacity: .5;
+	opacity: 0.5;
 }
 
 #app-navigation .unread > a {
@@ -145,11 +139,6 @@
 	white-space: nowrap;
 }
 
-#app-navigation .error-message:hover .title
-#app-navigation .error-message:hover .message {
-
-}
-
 #app-navigation .error-message button {
 	top: 0;
 	right: 0;
@@ -164,7 +153,7 @@
 	background-image: url('../img/close.svg');
 	background-repeat: no-repeat;
 	background-position: right 5px top 5px;
-	opacity: .9;
+	opacity: 0.9;
 }
 
 #app-navigation .error-message button:hover {
@@ -180,7 +169,7 @@
 
 #app-navigation .animate-show.ng-hide-add-active,
 #app-navigation .animate-show.ng-hide-remove-active {
-	transition: .2s linear opacity;
+	transition: 0.2s linear opacity;
 }
 
 #app-navigation .animate-show {
@@ -197,9 +186,6 @@
 
 #app-navigation .feed-reverse-ordering {
 	transform: rotate(180deg);
-}
-
-#app-navigation .feed-normal-ordering {
 }
 
 #app-navigation .icon-pinned {

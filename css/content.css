@@ -140,15 +140,15 @@
 	background-repeat: no-repeat;
 }
 
-#app-content .autopaging: #articles:after {
+/* #app-content .autopaging: #articles:after {
 	content: '';
 	background-image: url('../img/loading.gif');
 	background-position: calc(50% - 16px) calc(50% - 16px);
-	/* Overrides the snap.js animation making the loading icon to fly in app-content. */
+	/* Overrides the snap.js animation making the loading icon to fly in app-content. /
 	transition: none !important;
 	-webkit-transition: none !important;
 	-moz-webkit-transition: none !important;
-}
+} */
 
 #app-content .finished-auto-paging #articles:after {
 	background: var(--color-main-background);
@@ -164,7 +164,7 @@
 	background-image: -moz-linear-gradient(top, #eee 0%, #fefefe 100%);
 	background-image: -webkit-linear-gradient(top, #eee 0%, #fefefe 100%);
 	background-image: -ms-linear-gradient(top, #eee 0%, #fefefe 100%);
-	background-image: linear-gradient(top, #eee 0%, #fefefe 100%);
+	/* background-image: linear-gradient(top, #eee 0%, #fefefe 100%); */
 }
 
 .pull-to-refresh.show-pull-to-refresh {
@@ -172,7 +172,6 @@
 	padding-top: 10px;
 	height: 44px;
 }
-
 
 /**
  * Rules for a single feed item
@@ -199,10 +198,12 @@
 }
 
 #app-content .item.active {
-	background-image: linear-gradient(to right, orange 0, orange 2px, transparent 2px);
-}
-
-#app-content :not(.compact) .item {
+	background-image: linear-gradient(
+		to right,
+		orange 0,
+		orange 2px,
+		transparent 2px
+	);
 }
 
 #app-content .item:last-child {
@@ -271,10 +272,6 @@
 	padding: 0 6px;
 }
 
-#app-content .utils .article-action-plugins {
-
-}
-
 #app-content .utils button,
 #app-content .utils .external {
 	padding: 0;
@@ -284,7 +281,6 @@
 	border: 0;
 	float: left;
 	background-color: transparent;
-	background-size: 100%;
 	background-repeat: no-repeat;
 	background-size: 25px;
 	background-position: center;
@@ -317,7 +313,7 @@
 }
 
 #app-content .utils .more button {
-	opacity: .3;
+	opacity: 0.3;
 }
 
 #app-content .utils .more button:hover {
@@ -450,7 +446,6 @@
 	padding: 0 15px;
 	margin-right: 25px;
 }
-
 
 /**
  * Expanded content
@@ -695,6 +690,6 @@
 	opacity: 1;
 }
 
-#app-content *[dir=rtl] {
+#app-content *[dir='rtl'] {
 	text-align: right;
 }
