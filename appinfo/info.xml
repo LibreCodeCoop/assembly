@@ -23,5 +23,7 @@
     <commands>
         <command>OCA\Assembly\Command\BbbRegistry</command>
         <command>OCA\Assembly\Command\Mutesi</command>
+        <command>OCA\Assembly\Command\JitsiEnable</command>
+        <command>OCA\Assembly\Command\JitsiDisable</command>
     </commands>
 </info>

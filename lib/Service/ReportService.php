@@ -2,6 +2,10 @@
 
 namespace OCA\Assembly\Service;
 
+use DateTimeImmutable;
+use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\Signer\Hmac\Sha256;
+use Lcobucci\JWT\Signer\Key\InMemory;
 use OCA\Assembly\Db\ReportMapper;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\IDBConnection;
@@ -105,6 +109,29 @@ class ReportService
             } else {
                 $return['time'] = isset($row['meeting_time']) ? date('Y-m-d H:i:s', $row['meeting_time']) : null;
             }
+        } else if ($this->appConfig->getAppValue('enable_jitsi_jwt')) {
+            $config = Configuration::forSymmetricSigner(
+                new Sha256(),
+                InMemory::plainText($this->appConfig->getAppValue('jitsi_secret'))
+            );
+
+            $user = $this->userSession->getUser();
+            $token = $config->Builder()
+                ->permittedFor($this->appConfig->getAppValue('jitsi_appid')) //aud
+                ->issuedBy($this->appConfig->getAppValue('jitsi_appid')) // iss
+                ->relatedTo(parse_url($this->appConfig->getAppValue('jitsi_url'))['host']) // sub
+                ->withClaim('room', date('Ymd') . $groups[0]) // room
+                ->withClaim('moderator', in_array('admin', $groups)) // moderator
+                ->withClaim('context', [
+                    'user' => [
+                        'name' => $user->getDisplayName(),
+                        'email' => $user->getEMailAddress()
+                      ]
+                ]) // room
+                ->getToken($config->signer(), $config->signingKey());
+            $return['meetUrl'] = $this->appConfig->getAppValue('jitsi_url') .
+            '/' . date('Ymd') . $groups[0].
+                '?jwt=' . $token->toString();
         } else {
             $return['meetUrl'] = 'https://meet.jit.si/' . date('Ymd') . $groups[0];
         }
