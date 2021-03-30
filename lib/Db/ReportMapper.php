@@ -16,7 +16,6 @@ class ReportMapper extends QBMapper
 
     public function getResult($userId, $formId)
     {
-        $eb = new ExpressionBuilder($this->db);
         $qb = $this->db->getQueryBuilder();
         return $qb->select('f.title')
             ->selectAlias('a.text', 'response')
@@ -27,9 +26,9 @@ class ReportMapper extends QBMapper
             ->leftJoin('q', 'forms_v2_answers', 'a', 'a.submission_id =s.id')
             ->where('f.id = :formId')
             ->andWhere(
-                $eb->in(
+                $qb->expr()->in(
                     'f.id',
-                    $this->db->getQueryBuilder()
+                    new QueryFunction($this->db->getQueryBuilder()
                         ->select('s_f.id')
                         ->from('forms_v2_forms', 's_f')
                         ->leftJoin('s_f', 'group_user', 's_gu', "jsonb_exists((s_f.access_json->'groups')::jsonb, s_gu.gid)")
@@ -38,6 +37,7 @@ class ReportMapper extends QBMapper
                         ->where('s_f.owner_id = :userId or s_a.id is not null or s_gu.uid is not null or s_s.user_id = :userId')
                         ->groupBy('s_f.id')
                         ->getSQL()
+                    )
                 )
             )
             ->groupBy('a.text', 'f.id')
