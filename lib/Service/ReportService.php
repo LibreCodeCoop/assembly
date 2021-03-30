@@ -78,6 +78,13 @@ class ReportService
                     'groupId' => $item['groupId']
                 ]
             );
+            $return['data'][$key]['result_api_url'] = $this->urlGenerator->linkToRoute(
+                'assembly.api.report',
+                [
+                    'formId' => $item['formId'],
+                    'groupId' => $item['groupId']
+                ]
+            );
             unset($return['data'][$key]['hash']);
             unset($return['data'][$key]['formId']);
             unset($return['data'][$key]['groupId']);
