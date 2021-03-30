@@ -37,7 +37,7 @@ style('assembly','explore',);
 						<div class="explore-content">
 							<div class="explore-value">
 								<div class="explore-subscribe">
-									<a class="button" href="/index.php/apps/forms/<?php echo $row['hash'];?>" target="_blank"><?php echo $row['title'];?></a>
+									<a class="button" href="<?php echo $row['vote_url'];?>" target="_blank"><?php echo $row['title'];?></a>
 								</div>
 							</div>
 						</div>
@@ -66,7 +66,7 @@ style('assembly','explore',);
 						<div class="explore-content">
 							<div class="explore-value">
 								<div class="explore-subscribe">
-									<a class="button" href="/index.php/apps/assembly/report/<?php echo $row['formId'];?>/<?php echo $group[0]; ?>" target="_blank">Resultado <?php echo $row['title'];?></a>
+									<a class="button" href="<?php echo $row['result_url'];?>" target="_blank">Resultado <?php echo $row['title'];?></a>
 								</div>
 							</div>
 						</div>
