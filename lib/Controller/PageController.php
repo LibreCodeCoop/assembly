@@ -43,7 +43,7 @@ class PageController extends Controller {
 	 */
 	public function index() {
 		$return = $this->ReportService->getDashboard();
-		return new TemplateResponse('assembly', 'content/index', $return);  // templates/report.php
+		return new TemplateResponse('assembly', 'content/index', $return);
 
 	}
 
@@ -52,24 +52,8 @@ class PageController extends Controller {
 	 * @NoCSRFRequired
 	 */	
 	public function report($formId, $groupId) {
-
-		$data = $this->ReportMapper->getResult($this->userId, $formId);
-		$available = $this->ReportMapper->usersAvailable($groupId);
-		$responses = [];
-		$metadata['total'] = 0;
-		$metadata['available'] = count($available);
-		foreach ($data as $row) {
-			$responses[$row['response']] = $row['total'];
-			$metadata['total']+=$row['total'];
-		}
-		if($data){
-			$metadata['title'] = $data[0]['title'];
-		}
-		return new TemplateResponse('assembly', 'content/report', 
-			[
-				'responses'=>$responses,
-				'metadata'=>$metadata
-			] );  // templates/report.php
+		$return = $this->ReportService->getReport($formId, $groupId);
+		return new TemplateResponse('assembly', 'content/report', $return);
 	}	
 
 	/**

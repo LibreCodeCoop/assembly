@@ -104,4 +104,25 @@ class ReportService
         return $return;
     }
 
+    public function getReport($formId, $groupId)
+    {
+
+        $data = $this->ReportMapper->getResult($this->userId, $formId);
+        $available = $this->ReportMapper->usersAvailable($groupId);
+        $responses = [];
+        $metadata['total'] = 0;
+        $metadata['available'] = count($available);
+        foreach ($data as $row) {
+            $responses[$row['response']] = $row['total'];
+            $metadata['total']+=$row['total'];
+        }
+        if($data){
+            $metadata['title'] = $data[0]['title'];
+        }
+        return [
+            'responses' => $responses,
+            'metadata' => $metadata
+        ];
+    }
+
 }
