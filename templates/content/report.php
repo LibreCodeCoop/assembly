@@ -12,12 +12,12 @@ style('assembly', 'result');
 		</div>
 		<div class="grid">
 			<?php
-			foreach ($responses as $key => $value) {?>
+			foreach ($responses as $response) {?>
 				<div class="grid-item-content">
 					<div class="result-content">
-						<h1><?php echo $key;?></h1>
+						<h1><?php echo $response['text'];?></h1>
 						<div class="result-value">
-							<h3><?php echo $value;?></h3>
+							<h3><?php echo $response['total'];?></h3>
 						</div>
 					</div>
 				</div>

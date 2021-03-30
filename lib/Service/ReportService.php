@@ -146,7 +146,10 @@ class ReportService
         $metadata['total'] = 0;
         $metadata['available'] = count($available);
         foreach ($data as $row) {
-            $responses[$row['response']] = $row['total'];
+            $responses[] = [
+                'text' => $row['response'],
+                'total' => $row['total']
+            ];
             $metadata['total']+=$row['total'];
         }
         if($data){
