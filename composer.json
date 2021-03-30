@@ -8,7 +8,9 @@
             "name": "Lyseon Tech"
         }
     ],
-    "require": {},
+    "require": {
+        "lcobucci/jwt": "^4.1"
+    },
     "require-dev": {
         "phpunit/phpunit": "^5.4"
     }
