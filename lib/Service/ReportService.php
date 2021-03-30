@@ -7,6 +7,12 @@ use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use OCA\Assembly\Db\ReportMapper;
+use OCP\AppFramework\Services\IAppConfig;
+use OCP\IDBConnection;
+use OCP\IGroupManager;
+use OCP\IURLGenerator;
+use OCP\IUser;
+use OCP\IUserSession;
 
 class ReportService
 {
@@ -14,10 +20,43 @@ class ReportService
      * @var ReportMapper
      */
     protected $mapper;
-    
-    public function __construct(ReportMapper $mapper)
-    {
-        $this->mapper =  $mapper;
+    /** @var IUserSession */
+    protected $user;
+    /** @var AppConfig */
+    protected $appConfig;
+    /** @var IGroupManager */
+    protected $groupManager;
+    /** @var IDBConnection */
+    protected $db;
+    /** @var IUserSession */
+    protected $userSession;
+    /** @var ReportMapper */
+    protected $ReportMapper;
+    /** @var IURLGenerator */
+    protected $urlGenerator;
+    /** @var string */
+    protected $userId;
+
+    public function __construct(
+        ReportMapper $mapper,
+        IUserSession $user,
+        IAppConfig $appConfig,
+        IGroupManager $groupManager,
+        IDBConnection $db,
+        IUserSession $userSession,
+        ReportMapper $ReportMapper,
+        IURLGenerator $urlGenerator,
+        string $userId
+    ) {
+        $this->mapper = $mapper;
+        $this->user = $user;
+        $this->appConfig = $appConfig;
+        $this->groupManager = $groupManager;
+        $this->db = $db;
+        $this->userSession = $userSession;
+        $this->ReportMapper =  $ReportMapper;
+        $this->urlGenerator = $urlGenerator;
+        $this->userId = $userId;
     }
     public function getResult($userId, $formId)
     {
@@ -26,7 +65,10 @@ class ReportService
 
     public function getDashboard()
     {
-        $groups = $this->groupManager->getUserGroupIds($this->userSession->getUser());
+        $user = $this->userSession->getUser();
+        if ($user instanceof IUser) {
+            $groups = $this->groupManager->getUserGroupIds($this->userSession->getUser());
+        }
         $return['data'] = $this->ReportMapper->getPoll($this->userId);
         foreach ($return['data'] as $key => $item) {
             $return['data'][$key]['vote_url'] = $this->urlGenerator->linkToRoute(

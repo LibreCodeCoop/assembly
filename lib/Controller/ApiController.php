@@ -17,6 +17,7 @@ namespace OCA\Assembly\Controller;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use OCA\Assembly\Db\ReportMapper;
+use OCA\Assembly\Service\ReportService;
 use \OCP\IRequest;
 use \OCP\IUserSession;
 use \OCP\AppFramework\ApiController as BaseApiController;
@@ -44,6 +45,8 @@ class ApiController extends BaseApiController
      * @var ReportMapper
      */
     private $ReportMapper;
+    /** @var ReportService */
+    private $ReportService;
 
 
 
@@ -60,12 +63,14 @@ class ApiController extends BaseApiController
                             IRequest $request,
                             IUserSession $userSession,
                             ReportMapper $ReportMapper,
+                            ReportService $ReportService,
                             IDBConnection $db,
                             LoggerInterface $logger)
     {
         parent::__construct($appName, $request);
         $this->userSession = $userSession;
         $this->ReportMapper =  $ReportMapper;
+        $this->ReportService =  $ReportService;
         $this->db = $db;
         $this->logger = $logger;
     }
@@ -93,9 +98,10 @@ class ApiController extends BaseApiController
      *
      * @return array
      */
-    public function report($formId)
+    public function report($formId, $groupId)
     {
-        return $this->ReportMapper->getResult($this->getUserId(), $formId);
+        $return = $this->ReportService->getReport($formId, $groupId);
+        return new DataResponse($return, Http::STATUS_OK);
     }
 
     /**
@@ -159,5 +165,18 @@ class ApiController extends BaseApiController
             return new DataResponse(array('msg' => 'Participant already registered.'), Http::STATUS_FORBIDDEN);
         }
         return new DataResponse(array('msg' => 'Success'), Http::STATUS_CREATED);
+    }
+
+    /**
+     * @PublicPage
+     * @NoCSRFRequired
+     * @CORS
+     *
+     * @return array
+     */
+    public function dashboard()
+    {
+        $return = $this->ReportService->getDashboard();
+        return new DataResponse($return, Http::STATUS_OK);
     }
 }
