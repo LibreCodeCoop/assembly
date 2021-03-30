@@ -6,6 +6,7 @@ use OCA\Assembly\Db\ReportMapper;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
+use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserSession;
 
@@ -27,6 +28,10 @@ class ReportService
     protected $userSession;
     /** @var ReportMapper */
     protected $ReportMapper;
+    /** @var IURLGenerator */
+    protected $urlGenerator;
+    /** @var string */
+    protected $userId;
 
     public function __construct(
         ReportMapper $mapper,
@@ -35,7 +40,9 @@ class ReportService
         IGroupManager $groupManager,
         IDBConnection $db,
         IUserSession $userSession,
-        ReportMapper $ReportMapper
+        ReportMapper $ReportMapper,
+        IURLGenerator $urlGenerator,
+        string $userId
     ) {
         $this->mapper = $mapper;
         $this->user = $user;
@@ -44,6 +51,8 @@ class ReportService
         $this->db = $db;
         $this->userSession = $userSession;
         $this->ReportMapper =  $ReportMapper;
+        $this->urlGenerator = $urlGenerator;
+        $this->userId = $userId;
     }
     public function getResult($userId, $formId)
     {
@@ -54,9 +63,25 @@ class ReportService
     {
         $user = $this->userSession->getUser();
         if ($user instanceof IUser) {
-            $return['groups'] = $this->groupManager->getUserGroupIds($this->userSession->getUser());
+            $groups = $this->groupManager->getUserGroupIds($this->userSession->getUser());
         }
         $return['data'] = $this->ReportMapper->getPoll($this->userId);
+        foreach ($return['data'] as $key => $item) {
+            $return['data'][$key]['vote_url'] = $this->urlGenerator->linkToRoute(
+                'forms.page.goto_form',
+                ['hash' => $item['hash']]
+            );
+            $return['data'][$key]['result_url'] = $this->urlGenerator->linkToRoute(
+                'assembly.page.report',
+                [
+                    'formId' => $item['formId'],
+                    'groupId' => $item['groupId']
+                ]
+            );
+            unset($return['data'][$key]['hash']);
+            unset($return['data'][$key]['formId']);
+            unset($return['data'][$key]['groupId']);
+        }
         if ($this->appConfig->getAppValue('enable_mutesi')) {
             $query = $this->db->getQueryBuilder();
             $query->select(['url', 'meeting_time'])->from('assembly_participants', 'ap')
@@ -74,7 +99,7 @@ class ReportService
                 $return['time'] = isset($row['meeting_time']) ? date('Y-m-d H:i:s', $row['meeting_time']) : null;
             }
         } else {
-            $return['meetUrl'] = 'https://meet.jit.si/' . date('Ymd') . $return['groups'][0];
+            $return['meetUrl'] = 'https://meet.jit.si/' . date('Ymd') . $groups[0];
         }
         return $return;
     }
