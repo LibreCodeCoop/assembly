@@ -37,7 +37,7 @@ style('assembly','explore',);
 						<div class="explore-content">
 							<div class="explore-value">
 								<div class="explore-subscribe">
-									<a class="button" href="<?php echo $row['vote_url'];?>q" target="_blank"><?php echo $row['title'];?></a>
+									<a class="button" href="<?php echo $row['vote_url'];?>" target="_blank"><?php echo $row['title'];?></a>
 								</div>
 							</div>
 						</div>
