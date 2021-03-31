@@ -1,9 +1,9 @@
 <?php
 
 style('assembly','explore',);
-
+script("assembly", "dashboard");
 ?>
-			
+
 <div id="explore">
 	<div class="grid">
 		<div class="explore-feed grid-item" news-refresh-masonry>
@@ -16,7 +16,7 @@ style('assembly','explore',);
 				<div class="explore-content">
 					<div class="explore-value">
 						<div class="explore-subscribe">
-							<a class="button" href="<?php echo $meetUrl; ?>" target="_blank">Acessar sala</a>
+							<a class="button" id="btn-meet-link" href="<?php echo $meetUrl; ?>" target="_blank">Acessar sala</a>
 						</div>
 					</div>
 				</div>
@@ -30,7 +30,7 @@ style('assembly','explore',);
 					Votações
 				</div>
 			</div>
-			<div class="grid-item-content">
+			<div class="grid-item-content" id="grid-content-forms">
 				<?php
 				if(!empty($data)){
 					foreach ($data as $row) { ?>
@@ -50,7 +50,7 @@ style('assembly','explore',);
 				} ?>
 			</div>
 		</div>
-	</div>	
+	</div>
 	<div class="grid">
 		<div class="explore-feed grid-item" news-refresh-masonry>
 			<div class="category-wrapper">
@@ -59,7 +59,7 @@ style('assembly','explore',);
 				</div>
 			</div>
 
-			<div class="grid-item-content">
+			<div class="grid-item-content" id="grid-content-result">
 				<?php
 				if(!empty($data)){
 					foreach ($data as $row) { ?>
@@ -80,5 +80,5 @@ style('assembly','explore',);
 			</div>
 
 		</div>
-	</div>	
+	</div>
 </div>
