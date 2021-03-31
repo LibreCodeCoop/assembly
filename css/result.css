@@ -66,7 +66,7 @@
     width: 30%;
     float: left;
     margin: 20px;
-    
+
 }
 
 #result .grid-item-content-half {
@@ -76,7 +76,7 @@
     width: 45%;
     float: left;
     margin: 25px;
-    
+
 }
 
 #result .result-value {
@@ -88,7 +88,7 @@
     font-size: 40px;
     color: #0082c9;
     font-weight: bold;
-} 
+}
 
 #result .result-value img {
     width: 100%;
@@ -100,7 +100,7 @@
 }
 
 #result .result-subscribe .button{
-    padding:10px;    
+    padding:10px;
 }
 
 #result .result-content {
@@ -135,3 +135,12 @@
     text-decoration: underline;
 }
 
+.time-warn{
+    color: #fff;
+    font-weight: 400;
+    font-size: 13px;
+    position: absolute;
+    margin: 8px;
+    top: 0;
+    right: 0;
+}

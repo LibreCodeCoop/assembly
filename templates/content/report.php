@@ -8,7 +8,9 @@ style('assembly', 'result');
 		<div class="category-wrapper">
 			<div class="category">
 				Resultado <?php echo $metadata['title'];?>
+				<div class="time-warn" style="">Os resultados são atualizados automaticamente</div>
 			</div>
+
 		</div>
 		<div class="grid" id="gridVotes">
 			<?php

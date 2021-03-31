@@ -1,7 +1,3 @@
-const timeForUpdate = 5000;
-/** http://yourdomain.com.br/ */
-const mainDomain = "localhost";
-
 function replaceResponses(responses){
 	var newArr = Object.keys(responses).map(function(key){return [(key), responses[key]];});
 	const grid = document.getElementById("gridVotes");
@@ -30,17 +26,17 @@ function changeValues(totalValue, aptosValue){
 	document.getElementById("aptos").children[0].innerText = aptosValue;
 }
 
-function getUrl(domain){
+function getUrl(){
 	return "/index.php/apps/assembly/api/v1/"
 				+ window.location.href.split("assembly")[1];
 }
 
-function updateValuesByTheTime(domain){
-	const response = httpGet(getUrl(domain)).metadata;
-	replaceResponses(httpGet(getUrl(domain)).responses);
+function updateValuesByTheTime(){
+	const response = httpGet(getUrl()).metadata;
+	replaceResponses(httpGet(getUrl()).responses);
 	changeValues(response.total, response.available);
 }
 
 setInterval( function(){
-	updateValuesByTheTime(mainDomain)
-}, timeForUpdate);
+	updateValuesByTheTime()
+}, 10000);
