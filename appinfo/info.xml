@@ -13,6 +13,7 @@
     <bugs>https://github.com/lyseontech/assembly</bugs>
     <dependencies>
         <nextcloud min-version="18" max-version="20"/>
+        <database>pgsql</database>
     </dependencies>
     <navigations>
         <navigation>
