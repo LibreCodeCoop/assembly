@@ -1,2 +1,10 @@
+.idea
+*.iml
 /vendor/
+/js/
 /build/
+node_modules/
+/.php_cs.cache
+.phpunit.result.cache
+/docs/.vuepress/dist
+*.phar
