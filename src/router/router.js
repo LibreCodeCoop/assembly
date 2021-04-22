@@ -24,7 +24,6 @@ const routes = [
 	{
 		path: '/',
 		name: 'Home',
-		redirect: 'validation',
 		component: () => import('../views/Home'),
 	},
 ]

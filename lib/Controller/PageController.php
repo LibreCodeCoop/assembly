@@ -1,6 +1,7 @@
 <?php
 namespace OCA\Assembly\Controller;
 
+use OCA\Assembly\AppInfo\Application;
 use OCA\Assembly\Db\ReportMapper;
 use OCA\Assembly\Service\ReportService;
 use OCP\IRequest;
@@ -8,8 +9,13 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Controller;
 use OCP\IDBConnection;
 
+use OCP\IConfig;
+use OCP\Util;
+
 class PageController extends Controller {
-    /** @var IDBConnection */
+    /** @var IConfig */
+	private $config;
+	/** @var IDBConnection */
 	protected $db;
 	/** @var ReportService */
 	protected $ReportService;
@@ -20,41 +26,47 @@ class PageController extends Controller {
 
 	public function __construct(string $AppName,
 								IRequest $request,
+								IConfig $config,
 								string $UserId,
 								ReportMapper $ReportMapper,
 								ReportService $ReportService,
 								IDBConnection $db) {
 		parent::__construct($AppName, $request);
 		$this->userId = $UserId;
+		$this->config = $config;
 		$this->ReportMapper =  $ReportMapper;
 		$this->ReportService = $ReportService;
 		$this->db = $db;
 	}
 
 	/**
-	 * CAUTION: the @Stuff turns off security checks; for this page no admin is
-	 *          required and no CSRF check. If you don't know what CSRF is, read
-	 *          it up in the docs or you might create a security hole. This is
-	 *          basically the only required method to add this exemption, don't
-	 *          add it to any other method if you don't exactly know what it does
-	 *
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
+	 *
+	 * Render default template
 	 */
 	public function index() {
-		$return = $this->ReportService->getDashboard();
-		return new TemplateResponse('assembly', 'content/index', $return);
+		Util::addScript(Application::APP_ID, 'assembly-main');
 
+		$response = new TemplateResponse(Application::APP_ID, 'main');
+
+		if ($this->config->getSystemValue('debug')) {
+			$csp = new ContentSecurityPolicy();
+			$csp->setInlineScriptAllowed(true);
+			$response->setContentSecurityPolicy($csp);
+		}
+
+		return $response;
 	}
 
 	/**
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
-	 */	
+	 */
 	public function report($formId, $groupId) {
 		$return = $this->ReportService->getReport($formId, $groupId);
 		return new TemplateResponse('assembly', 'content/report', $return);
-	}	
+	}
 
 	/**
 	 * @NoAdminRequired
