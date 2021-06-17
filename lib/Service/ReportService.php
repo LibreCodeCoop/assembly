@@ -33,8 +33,6 @@ class ReportService
     protected $ReportMapper;
     /** @var IURLGenerator */
     protected $urlGenerator;
-    /** @var string */
-    protected $userId;
 
     public function __construct(
         ReportMapper $mapper,
@@ -44,8 +42,7 @@ class ReportService
         IDBConnection $db,
         IUserSession $userSession,
         ReportMapper $ReportMapper,
-        IURLGenerator $urlGenerator,
-        string $userId
+        IURLGenerator $urlGenerator
     ) {
         $this->mapper = $mapper;
         $this->user = $user;
@@ -55,7 +52,6 @@ class ReportService
         $this->userSession = $userSession;
         $this->ReportMapper =  $ReportMapper;
         $this->urlGenerator = $urlGenerator;
-        $this->userId = $userId;
     }
     public function getResult($userId, $formId)
     {
@@ -68,7 +64,7 @@ class ReportService
         if ($user instanceof IUser) {
             $groups = $this->groupManager->getUserGroupIds($this->userSession->getUser());
         }
-        $return['data'] = $this->ReportMapper->getPoll($this->userId);
+        $return['data'] = $this->ReportMapper->getPoll($this->userSession->getUser()->getUID());
         foreach ($return['data'] as $key => $item) {
             $return['data'][$key]['vote_url'] = $this->urlGenerator->linkToRoute(
                 'forms.page.goto_form',
@@ -96,7 +92,7 @@ class ReportService
             $query = $this->db->getQueryBuilder();
             $query->select(['url', 'meeting_time'])->from('assembly_participants', 'ap')
                 ->join('ap', 'assembly_meetings', 'am', 'am.meeting_id = ap.meeting_id')
-                ->where($query->expr()->eq('ap.uid', $query->createNamedParameter($this->userId)))
+                ->where($query->expr()->eq('ap.uid', $query->createNamedParameter($this->userSession->getUser()->getUID())))
                 ->andWhere($query->expr()->gt('am.meeting_time', $query->createNamedParameter(
                     time()-(60*60*24)
                 )))
@@ -140,7 +136,7 @@ class ReportService
     public function getReport($formId, $groupId)
     {
 
-        $data = $this->ReportMapper->getResult($this->userId, $formId);
+        $data = $this->ReportMapper->getResult($this->userSession->getUser()->getUID(), $formId);
         $available = $this->ReportMapper->usersAvailable($groupId);
         $responses = [];
         $metadata['total'] = 0;
