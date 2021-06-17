@@ -7,25 +7,24 @@ use OCP\IRequest;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Controller;
 use OCP\IDBConnection;
+use OCP\IUserSession;
 
 class PageController extends Controller {
     /** @var IDBConnection */
 	protected $db;
 	/** @var ReportService */
 	protected $ReportService;
-
-	private $userId;
-
-
+	/** @var IUserSession */
+	private $userSession;
 
 	public function __construct(string $AppName,
 								IRequest $request,
-								string $UserId,
+								IUserSession $userSession,
 								ReportMapper $ReportMapper,
 								ReportService $ReportService,
 								IDBConnection $db) {
 		parent::__construct($AppName, $request);
-		$this->userId = $UserId;
+		$this->userSession = $userSession;
 		$this->ReportMapper =  $ReportMapper;
 		$this->ReportService = $ReportService;
 		$this->db = $db;
@@ -70,7 +69,7 @@ class PageController extends Controller {
 		if ($meetingId != 'wait') {
 			$query->andWhere($query->expr()->eq('am.meeting_id', $query->createNamedParameter($meetingId)));
 		}
-		$query->andWhere($query->expr()->eq('ap.uid', $query->createNamedParameter($this->userId)));
+		$query->andWhere($query->expr()->eq('ap.uid', $query->createNamedParameter($this->userSession->getUser()->getUID())));
 		$query->orderBy('ap.created_at', 'ASC');
 		$stmt = $query->execute();
 		$row = $stmt->fetch(\PDO::FETCH_ASSOC);
