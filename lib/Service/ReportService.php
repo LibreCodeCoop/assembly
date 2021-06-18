@@ -99,7 +99,7 @@ class ReportService
                 ->orderBy('ap.created_at', 'ASC');
             $stmt = $query->execute();
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-            if ($row['meeting_time'] < time()) {
+            if (isset($row['meeting_time']) && $row['meeting_time'] < time()) {
                 $return['meetUrl'] = $row['url'];
             } else {
                 $return['time'] = isset($row['meeting_time']) ? date('Y-m-d H:i:s', $row['meeting_time']) : null;
