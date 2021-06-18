@@ -58,9 +58,8 @@ class ApiController extends BaseApiController
     }
 
     /**
-     * @PublicPage
      * @NoCSRFRequired
-     * @CORS
+     * @NoAdminRequired
      *
      * @return array
      */
@@ -71,9 +70,8 @@ class ApiController extends BaseApiController
     }
 
     /**
-     * @PublicPage
      * @NoCSRFRequired
-     * @CORS
+     * @NoAdminRequired
      *
      * @return array
      */
@@ -83,9 +81,8 @@ class ApiController extends BaseApiController
     }
 
     /**
-     * @PublicPage
      * @NoCSRFRequired
-     * @CORS
+     * @NoAdminRequired
      *
      * @return array
      */
@@ -134,9 +131,8 @@ class ApiController extends BaseApiController
     }
 
     /**
-     * @PublicPage
      * @NoCSRFRequired
-     * @CORS
+     * @NoAdminRequired
      *
      * @return array
      */

@@ -62,9 +62,9 @@ class ReportService
     {
         $user = $this->userSession->getUser();
         if ($user instanceof IUser) {
-            $groups = $this->groupManager->getUserGroupIds($this->userSession->getUser());
+            $groups = $this->groupManager->getUserGroupIds($user);
         }
-        $return['data'] = $this->ReportMapper->getPoll($this->userSession->getUser()->getUID());
+        $return['data'] = $this->ReportMapper->getPoll($user->getUID());
         foreach ($return['data'] as $key => $item) {
             $return['data'][$key]['vote_url'] = $this->urlGenerator->linkToRoute(
                 'forms.page.goto_form',
@@ -92,7 +92,7 @@ class ReportService
             $query = $this->db->getQueryBuilder();
             $query->select(['url', 'meeting_time'])->from('assembly_participants', 'ap')
                 ->join('ap', 'assembly_meetings', 'am', 'am.meeting_id = ap.meeting_id')
-                ->where($query->expr()->eq('ap.uid', $query->createNamedParameter($this->userSession->getUser()->getUID())))
+                ->where($query->expr()->eq('ap.uid', $query->createNamedParameter($user->getUID())))
                 ->andWhere($query->expr()->gt('am.meeting_time', $query->createNamedParameter(
                     time()-(60*60*24)
                 )))
@@ -110,7 +110,6 @@ class ReportService
                 InMemory::plainText($this->appConfig->getAppValue('jitsi_secret'))
             );
 
-            $user = $this->userSession->getUser();
             $token = $config->Builder()
                 ->permittedFor($this->appConfig->getAppValue('jitsi_appid')) //aud
                 ->issuedBy($this->appConfig->getAppValue('jitsi_appid')) // iss
