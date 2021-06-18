@@ -19,7 +19,6 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use OCA\Assembly\Db\ReportMapper;
 use OCA\Assembly\Service\ReportService;
 use \OCP\IRequest;
-use \OCP\IUserSession;
 use \OCP\AppFramework\ApiController as BaseApiController;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
@@ -38,37 +37,20 @@ class ApiController extends BaseApiController
     /** @var LoggerInterface */
     protected $logger;
     /**
-     * @var IUserSession
-     */
-    private $userSession;
-    /**
      * @var ReportMapper
      */
     private $ReportMapper;
     /** @var ReportService */
     private $ReportService;
 
-
-
-    /**
-     * ApiController constructor.
-     *
-     * Stores the user session to be able to leverage the user in further methods
-     *
-     * @param string        $appName        The name of the app
-     * @param IRequest      $request        The request
-     * @param IUserSession  $userSession    The user session
-     */
     public function __construct($appName,
                             IRequest $request,
-                            IUserSession $userSession,
                             ReportMapper $ReportMapper,
                             ReportService $ReportService,
                             IDBConnection $db,
                             LoggerInterface $logger)
     {
         parent::__construct($appName, $request);
-        $this->userSession = $userSession;
         $this->ReportMapper =  $ReportMapper;
         $this->ReportService =  $ReportService;
         $this->db = $db;
