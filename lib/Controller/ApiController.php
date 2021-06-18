@@ -76,22 +76,6 @@ class ApiController extends BaseApiController
     }
 
     /**
-     * @return IUser
-     */
-    protected function getUser()
-    {
-        return $this->userSession->getUser();
-    }
-
-    /**
-     * @return string
-     */
-    protected function getUserId()
-    {
-        return $this->getUser()->getUID();
-    }
-
-    /**
      * @PublicPage
      * @NoCSRFRequired
      * @CORS
