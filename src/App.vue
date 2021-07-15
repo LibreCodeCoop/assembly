@@ -22,11 +22,43 @@
 -->
 
 <template>
-	<router-view />
+	<Content class="content-app" app-name="assembly">
+		<!-- <AppNavigation> -->
+		<NavBar>
+			<Menu />
+		</NavBar>
+		<!-- </AppNavigation> -->
+		<AppContent id="container">
+			<router-view />
+		</AppContent>
+	</Content>
 </template>
 
 <script>
+import Content from '@nextcloud/vue/dist/Components/Content'
+import AppContent from '@nextcloud/vue/dist/Components/AppContent'
+import NavBar from './Components/NavBar'
+import Menu from './Components/Menu'
 export default {
 	name: 'App',
+	components: {
+		NavBar,
+		Menu,
+		AppContent,
+		Content,
+	},
 }
 </script>
+<style scoped>
+.content-app{
+	background-color: #0082c9;
+	background-image: linear-gradient(40deg, #0082c9 0%, #30b6ff 100%);
+	height: 100%;
+}
+
+#container{
+	background-color: #FFF;
+	border-radius: 50px 0 0 50px;
+	padding: 20px 0 0 20px;
+}
+</style>

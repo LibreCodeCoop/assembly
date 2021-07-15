@@ -21,6 +21,8 @@
  *
  */
 
+import { generateFilePath } from '@nextcloud/router'
+import { getRequestToken } from '@nextcloud/auth'
 import Vue from 'vue'
 
 import App from './App'
