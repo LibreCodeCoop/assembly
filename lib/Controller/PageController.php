@@ -46,7 +46,7 @@ class PageController extends Controller {
 	 * Render default template
 	 */
 	public function index() {
-		Util::addScript(Application::APP_ID, 'assembly-main');
+		Util::addScript(Application::APP_ID, 'assembly-app');
 
 		$response = new TemplateResponse(Application::APP_ID, 'main');
 
