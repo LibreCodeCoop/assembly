@@ -13,10 +13,12 @@
 		"lint": "vue-cli-service lint"
 	},
 	"dependencies": {
+		"@mycure/vue-jitsi-meet": "^0.0.7",
 		"@nextcloud/axios": "^1.6.0",
 		"@nextcloud/dialogs": "^3.1.2",
 		"@nextcloud/initial-state": "^1.2.0",
 		"@nextcloud/l10n": "^1.4.1",
+		"@nextcloud/logger": "^2.0.0",
 		"@nextcloud/router": "^2.0.0",
 		"@nextcloud/vue": "^4.0.3",
 		"@nextcloud/webpack-vue-config": "^4.1.0",
