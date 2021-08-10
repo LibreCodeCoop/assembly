@@ -1,6 +1,6 @@
-//eslint-disable-next-line
+// eslint-disable-next-line
 const TerserPlugin = require("terser-webpack-plugin");
-//eslint-disable-next-line
+// eslint-disable-next-line
 const path = require("path");
 
 const appName = process.env.npm_package_name;
@@ -19,10 +19,8 @@ module.exports = {
 	outputDir: "./js",
 
 	configureWebpack: (config) => {
-		config.output.filename = `${appName}-[name].js?v=[hash]`;
-
-		config.output.chunkFilename = `${appName}-[name].js?v=[hash]`;
-
+		config.output.filename = `${appName}-[name].js?v=[contenthash]`;
+		config.output.chunkFilename = `${appName}-[name].js?v=[contenthash]`;
 		config.optimization = {
 			splitChunks: {
 				automaticNameDelimiter: "-",
