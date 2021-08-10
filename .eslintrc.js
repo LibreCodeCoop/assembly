@@ -4,7 +4,6 @@ module.exports = {
 		node: true,
 	},
 	extends: [
-		"nextcloud",
 		"plugin:vue/essential",
 		"eslint:recommended",
 		"@vue/typescript/recommended",
@@ -21,7 +20,6 @@ module.exports = {
 			"error",
 			{ ignoreRestArgs: true },
 		],
-		"prettier/prettier": ["error", { singleQuote: false, parser: "flow" }],
 		"node/no-missing-import": "off",
 	},
 	settings: {
