@@ -14,7 +14,7 @@ Vue.mixin({ methods: { t, n } });
 
 __webpack_nonce__ = btoa(getRequestToken() as string);
 
-__webpack_public_path__ = generateFilePath("libresign", "", "js/");
+__webpack_public_path__ = generateFilePath("assembly", "", "js/");
 
 new Vue({
 	router,
