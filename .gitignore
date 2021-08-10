@@ -32,3 +32,4 @@ pnpm-debug.log*
 .phpunit.result.cache
 *.phar
 *.log
+/js/

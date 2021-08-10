@@ -1,21 +1,15 @@
 <template>
-	<AppContent>
-		<div id="app">
-			<div id="nav">
-				<router-link to="/">Home</router-link> |
-				<router-link to="/about">About</router-link>
-			</div>
-			<router-view />
-		</div>
-	</AppContent>
+	<Content appName="assembly">
+		<h1>Ika</h1>
+	</Content>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import AppContent from "@nextcloud/vue/dist/Components/AppContent";
+import Content from "@nextcloud/vue/dist/Components/Content";
 export default Vue.extend({
 	components: {
-		AppContent,
+		Content,
 	},
 });
 </script>
