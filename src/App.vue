@@ -19,20 +19,47 @@
 				/>
 			</template>
 		</AppNavigation>
+		<AppContent :class="{ 'icon-loading': loading }">
+			<router-view v-show="!loading" :loading.sync="loading" />
+			<EmptyContent v-show="isRoot" class="emp-content">
+				<template #desc>
+					<p>
+						{{ t("assembly", "Tavola app for Nextcloud.") }}
+					</p>
+				</template>
+			</EmptyContent>
+		</AppContent>
 		<router-view />
 	</Content>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import Content from "@nextcloud/vue/dist/Components/Content";
-import AppNavigation from "@nextcloud/vue/dist/Components/AppNavigation";
-import AppNavigationItem from "@nextcloud/vue/dist/Components/AppNavigationItem";
+import {
+	Content,
+	AppNavigation,
+	AppNavigationItem,
+	AppContent,
+	EmptyContent,
+} from "@nextcloud/vue";
 export default Vue.extend({
 	components: {
-		Content,
 		AppNavigation,
 		AppNavigationItem,
+		AppContent,
+		Content,
+		EmptyContent,
+	},
+	data: () => ({
+		loading: false,
+	}),
+	created() {
+		console.info(this.$router);
+	},
+	computed: {
+		isRoot() {
+			return this.$route.path === "/";
+		},
 	},
 });
 </script>
