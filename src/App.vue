@@ -1,15 +1,38 @@
 <template>
 	<Content appName="assembly">
-		<h1>Ika</h1>
+		<AppNavigation>
+			<template #list>
+				<AppNavigationItem
+					:to="{ name: 'room' }"
+					:title="t('assembly', 'Room')"
+					icon="icon-video"
+				/>
+				<AppNavigationItem
+					:to="{ name: 'votation' }"
+					:title="t('assembly', 'Votations')"
+					icon="icon-category-organization"
+				/>
+				<AppNavigationItem
+					:to="{ name: 'results' }"
+					:title="t('assembly', 'Results')"
+					icon="icon-clippy"
+				/>
+			</template>
+		</AppNavigation>
+		<router-view />
 	</Content>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import Content from "@nextcloud/vue/dist/Components/Content";
+import AppNavigation from "@nextcloud/vue/dist/Components/AppNavigation";
+import AppNavigationItem from "@nextcloud/vue/dist/Components/AppNavigationItem";
 export default Vue.extend({
 	components: {
 		Content,
+		AppNavigation,
+		AppNavigationItem,
 	},
 });
 </script>
