@@ -29,7 +29,6 @@
 				</template>
 			</EmptyContent>
 		</AppContent>
-		<router-view />
 	</Content>
 </template>
 
