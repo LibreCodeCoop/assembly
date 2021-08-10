@@ -28,6 +28,14 @@
 		"vue-router": "^3.2.0",
 		"vuex": "^3.4.0"
 	},
+	"browserslist": [
+		"> 1%",
+		"last 2 versions",
+		"not ie <= 8"
+	],
+	"engines": {
+		"node": ">=10.0.0"
+	},
 	"devDependencies": {
 		"@nextcloud/browserslist-config": "^2.1.0",
 		"@nextcloud/eslint-config": "^6.0.0",
