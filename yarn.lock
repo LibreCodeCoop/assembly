@@ -1211,6 +1211,11 @@
   dependencies:
     core-js "3.6.1"
 
+"@nextcloud/browserslist-config@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@nextcloud/browserslist-config/-/browserslist-config-2.1.0.tgz#83a56660006b3113f9afa9bf99965251384cdb52"
+  integrity sha512-6yezTvZTxHWec8A+zW1QBNgvJu0ISw0ODDBmC2CVuOVZn5OvKZSRKJO2+lzWnHtxLjgSZ/HFiSDSRN0rf+d6Cw==
+
 "@nextcloud/capabilities@^1.0.2":
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@nextcloud/capabilities/-/capabilities-1.0.4.tgz#b78dcc62a759ab957e8b908a000abd176f255fd8"
@@ -1228,6 +1233,18 @@
     "@nextcloud/typings" "^1.0.0"
     core-js "^3.6.4"
     toastify-js "^1.10.0"
+
+"@nextcloud/eslint-config@^6.0.0":
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/@nextcloud/eslint-config/-/eslint-config-6.0.0.tgz#5d65ec030a9e64e7c22099d48f1c60f8e9517dcf"
+  integrity sha512-Zz4922zbijq796Xh4TT8RZJIv9hZmwUtIsXqJPKw4nCChHydvOMgwDqtm4Mow2OA7wc3Ff38dKr03KdFiJA0Ng==
+
+"@nextcloud/eslint-plugin@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@nextcloud/eslint-plugin/-/eslint-plugin-2.0.0.tgz#55336973752af669954b0cf0c8887503e8494ba6"
+  integrity sha512-j5WXTDTprr/cDilVJtC1mnrpkvD6jlEMShs72V5plllatHjO7kpZHzUfCX3dSvGwYc2ACa0XH+FbkPoZQ3+eWQ==
+  dependencies:
+    requireindex "^1.2.0"
 
 "@nextcloud/event-bus@^1.1.3":
   version "1.3.0"
@@ -1318,10 +1335,10 @@
     vue-visible "^1.0.2"
     vue2-datepicker "^3.6.3"
 
-"@nextcloud/webpack-vue-config@^4.0.3":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@nextcloud/webpack-vue-config/-/webpack-vue-config-4.0.3.tgz#02b2dd32802493c1c16861d436cfd564b01ac0ff"
-  integrity sha512-+xgMaqqGGjrehpgD5clisQKpk2Idl+cPhX45pdl2xJFeS4wNkJLhHzDpF/QAcKeDamQuc4G6PU9q/bbSpPWrug==
+"@nextcloud/webpack-vue-config@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@nextcloud/webpack-vue-config/-/webpack-vue-config-4.1.0.tgz#183082ccd30cd9236c36a60489e44fcad61ce295"
+  integrity sha512-sIZJVq2XVj1ijC0HNDjOIXqfOEm41vXAQEHSU/qdhrFmSSzi9C/HtoYzqtD+qgrtFochMY5x2To04zZHqhUoAg==
 
 "@nicolo-ribaudo/chokidar-2@2.1.8-no-fsevents.2":
   version "2.1.8-no-fsevents.2"
@@ -10172,6 +10189,11 @@ require-main-filename@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/require-main-filename/-/require-main-filename-2.0.0.tgz#d0b329ecc7cc0f61649f62215be69af54aa8989b"
   integrity sha512-NKN5kMDylKuldxYLSUfrbo5Tuzh4hd+2E8NPPX02mZtn1VuREQToYe/ZdlJy+J3uCpfaiGF05e7B8W0iXbQHmg==
+
+requireindex@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/requireindex/-/requireindex-1.2.0.tgz#3463cdb22ee151902635aa6c9535d4de9c2ef1ef"
+  integrity sha512-L9jEkOi3ASd9PYit2cwRfyppc9NoABujTP8/5gFcbERmo5jUoAKovIC3fsF17pkTnGsrByysqX+Kxd2OTNI1ww==
 
 requires-port@^1.0.0:
   version "1.0.0"
