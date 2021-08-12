@@ -29,12 +29,7 @@
 							<span>{{ room.hour }}</span>
 						</div>
 
-						<button
-							@click.prevent="acessRoom(room.url)"
-							class="primary"
-						>
-							Acessar
-						</button>
+						<button class="primary">Acessar</button>
 					</div>
 				</div>
 			</div>
@@ -45,9 +40,6 @@
 import Vue from "vue";
 import axios from "@nextcloud/axios";
 import { generateUrl } from "@nextcloud/router";
-import AddNewMeetUseCase, { IAddNewMeetUseCase } from "@/usecases/AddNewMeet";
-import { MeetEntity } from "@/entities/Meet";
-import ErrorService from "@/srvices/ErrorService";
 
 export default Vue.extend({
 	name: "Room",
@@ -115,15 +107,6 @@ export default Vue.extend({
 			} catch (err) {
 				console.error(err.response);
 			}
-		},
-		async acessRoom(url) {
-			const params: IAddNewMeetUseCase = {
-				meet: url,
-				errorService: new ErrorService({
-					context: "Add new Meet",
-				}),
-			};
-			await new AddNewMeetUseCase(params).execute(url);
 		},
 	},
 });
