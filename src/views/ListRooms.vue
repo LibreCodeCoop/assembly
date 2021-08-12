@@ -5,6 +5,7 @@
 				<div class="date">
 					<span>{{ day.dDay }}</span>
 					<h3>{{ day.day }}</h3>
+					<span v-if="day.today">Hoje</span>
 				</div>
 				<div class="rooms-peer-date">
 					<div
@@ -15,18 +16,21 @@
 						<div class="subject">
 							<h1>{{ room.description }}</h1>
 						</div>
-						<div class="author">
+						<div class="flex-row author">
+							<p class="icon-user"></p>
 							<span>Por {{ room.author }}</span>
 						</div>
-						<div class="n-call">
+						<div class="flex-row n-call">
+							<p class="icon-category-monitoring" />
 							<span> {{ room.call }}</span>
 						</div>
-						<div class="hour">
+						<div class="flex-row hour">
+							<p class="icon-calendar" />
 							<span>{{ room.hour }}</span>
 						</div>
 
 						<button
-							@click.prevent="console.log('ola')"
+							@click.prevent="acessRoom(room.url)"
 							class="primary"
 						>
 							Acessar
@@ -41,15 +45,20 @@
 import Vue from "vue";
 import axios from "@nextcloud/axios";
 import { generateUrl } from "@nextcloud/router";
+import AddNewMeetUseCase, { IAddNewMeetUseCase } from "@/usecases/AddNewMeet";
+import { MeetEntity } from "@/entities/Meet";
+import ErrorService from "@/srvices/ErrorService";
 
 export default Vue.extend({
 	name: "Room",
+
 	data: () => ({
 		url: "",
 		calendar: [
 			{
 				day: 13,
 				dDay: "Terça",
+				today: true,
 				rooms: [
 					{
 						id: 1,
@@ -57,6 +66,7 @@ export default Vue.extend({
 						author: "Vinicios Gomes",
 						call: "1a Chamada",
 						hour: "09:10",
+						url: "getTi",
 					},
 					{
 						id: 2,
@@ -64,19 +74,21 @@ export default Vue.extend({
 						author: "Vinicios Gomes",
 						call: "1a Chamada",
 						hour: "09:10",
+						url: "getTi",
 					},
 				],
 			},
 			{
-				day: 13,
-				dDay: "Terça",
+				day: 14,
+				dDay: "Quarta",
 				rooms: [
 					{
 						id: 1,
 						description: "Assembleia Geral orginaria",
 						author: "Vinicios Gomes",
 						call: "1a Chamada",
-						hour: "09:10",
+						hour: "10:12",
+						url: "getTi",
 					},
 					{
 						id: 2,
@@ -84,6 +96,7 @@ export default Vue.extend({
 						author: "Vinicios Gomes",
 						call: "1a Chamada",
 						hour: "09:10",
+						url: "getTi",
 					},
 				],
 			},
@@ -99,10 +112,18 @@ export default Vue.extend({
 					generateUrl("/apps/assembly/api/v1/dashboard")
 				);
 				this.url = response.data.meetUrl;
-				console.info(response);
 			} catch (err) {
 				console.error(err.response);
 			}
+		},
+		async acessRoom(url) {
+			const params: IAddNewMeetUseCase = {
+				meet: url,
+				errorService: new ErrorService({
+					context: "Add new Meet",
+				}),
+			};
+			await new AddNewMeetUseCase(params).execute(url);
 		},
 	},
 });
@@ -116,6 +137,7 @@ export default Vue.extend({
 	.content {
 		display: flex;
 		flex-direction: column;
+		font-size: 1rem;
 
 		.room {
 			display: flex;
@@ -133,7 +155,7 @@ export default Vue.extend({
 				margin: 10px;
 				padding: 10px;
 
-				h1 {
+				h3 {
 					font-size: 2.4rem;
 					font-weight: normal;
 					text-align: center;
@@ -152,9 +174,17 @@ export default Vue.extend({
 					align-items: center;
 					width: 100%;
 					color: #5a5b61;
+					margin: 15px 0;
 
 					div {
 						margin: 0 30px;
+					}
+					.flex-row {
+						display: flex;
+						flex-direction: row;
+					}
+					p {
+						margin: 0 5px;
 					}
 
 					.subject {

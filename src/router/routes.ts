@@ -2,8 +2,8 @@ import { RouteConfig } from "vue-router";
 
 export const routes: Array<RouteConfig> = [
 	{
-		path: "#room",
-		component: () => import("@/views/Room.vue"),
+		path: "#list-rooms",
+		component: () => import("@/views/ListRooms.vue"),
 		name: "room",
 	},
 	{
@@ -15,5 +15,10 @@ export const routes: Array<RouteConfig> = [
 		path: "#results",
 		component: () => import("@/views/Results.vue"),
 		name: "results",
+	},
+	{
+		path: "#room",
+		component: () => import("@/components/Meet"),
+		name: "room",
 	},
 ];
