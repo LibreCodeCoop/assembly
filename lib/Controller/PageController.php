@@ -10,7 +10,7 @@ use OCP\IDBConnection;
 use OCP\IUserSession;
 
 class PageController extends Controller {
-    /** @var IDBConnection */
+	/** @var IDBConnection */
 	protected $db;
 	/** @var ReportService */
 	protected $ReportService;
