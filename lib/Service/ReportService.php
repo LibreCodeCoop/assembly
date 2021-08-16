@@ -33,8 +33,6 @@ class ReportService
     protected $ReportMapper;
     /** @var IURLGenerator */
     protected $urlGenerator;
-    /** @var string */
-    protected $userId;
 
     public function __construct(
         ReportMapper $mapper,
@@ -44,8 +42,7 @@ class ReportService
         IDBConnection $db,
         IUserSession $userSession,
         ReportMapper $ReportMapper,
-        IURLGenerator $urlGenerator,
-        string $userId
+        IURLGenerator $urlGenerator
     ) {
         $this->mapper = $mapper;
         $this->user = $user;
@@ -55,7 +52,6 @@ class ReportService
         $this->userSession = $userSession;
         $this->ReportMapper =  $ReportMapper;
         $this->urlGenerator = $urlGenerator;
-        $this->userId = $userId;
     }
     public function getResult($userId, $formId)
     {
@@ -66,9 +62,9 @@ class ReportService
     {
         $user = $this->userSession->getUser();
         if ($user instanceof IUser) {
-            $groups = $this->groupManager->getUserGroupIds($this->userSession->getUser());
+            $groups = $this->groupManager->getUserGroupIds($user);
         }
-        $return['data'] = $this->ReportMapper->getPoll($this->userId);
+        $return['data'] = $this->ReportMapper->getPoll($user->getUID());
         foreach ($return['data'] as $key => $item) {
             $return['data'][$key]['vote_url'] = $this->urlGenerator->linkToRoute(
                 'forms.page.goto_form',
@@ -96,14 +92,14 @@ class ReportService
             $query = $this->db->getQueryBuilder();
             $query->select(['url', 'meeting_time'])->from('assembly_participants', 'ap')
                 ->join('ap', 'assembly_meetings', 'am', 'am.meeting_id = ap.meeting_id')
-                ->where($query->expr()->eq('ap.uid', $query->createNamedParameter($this->userId)))
+                ->where($query->expr()->eq('ap.uid', $query->createNamedParameter($user->getUID())))
                 ->andWhere($query->expr()->gt('am.meeting_time', $query->createNamedParameter(
                     time()-(60*60*24)
                 )))
                 ->orderBy('ap.created_at', 'ASC');
             $stmt = $query->execute();
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-            if ($row['meeting_time'] < time()) {
+            if (isset($row['meeting_time']) && $row['meeting_time'] < time()) {
                 $return['meetUrl'] = $row['url'];
             } else {
                 $return['time'] = isset($row['meeting_time']) ? date('Y-m-d H:i:s', $row['meeting_time']) : null;
@@ -114,7 +110,6 @@ class ReportService
                 InMemory::plainText($this->appConfig->getAppValue('jitsi_secret'))
             );
 
-            $user = $this->userSession->getUser();
             $token = $config->Builder()
                 ->permittedFor($this->appConfig->getAppValue('jitsi_appid')) //aud
                 ->issuedBy($this->appConfig->getAppValue('jitsi_appid')) // iss
@@ -140,7 +135,7 @@ class ReportService
     public function getReport($formId, $groupId)
     {
 
-        $data = $this->ReportMapper->getResult($this->userId, $formId);
+        $data = $this->ReportMapper->getResult($this->userSession->getUser()->getUID(), $formId);
         $available = $this->ReportMapper->usersAvailable($groupId);
         $responses = [];
         $metadata['total'] = 0;
