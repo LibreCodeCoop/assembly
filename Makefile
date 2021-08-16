@@ -3,6 +3,7 @@
 
 # Dependencies:
 # * make
+# * npm
 # * curl: used if phpunit and composer are not installed to fetch them from the web
 # * tar: for building the archive
 
@@ -16,6 +17,7 @@ cert_dir=$(build_tools_directory)/certificates
 composer=$(shell which composer 2> /dev/null)
 
 all: dev-setup
+serve: dev-setup watch-js
 
 # Installs and updates the composer dependencies. If composer is not installed
 # a copy is fetched from the web
@@ -48,13 +50,17 @@ clean-dev:
 appstore: clean
 	mkdir -p $(appstore_sign_dir)/$(app_name)
 	composer install --no-dev
+	yarn
+	yarn build
 	cp -r \
 		appinfo \
 		img \
 		js \
+		l10n \
 		lib \
 		templates \
 		vendor \
+		CHANGELOG.md \
 		LICENSE \
 		$(appstore_sign_dir)/$(app_name) \
 
