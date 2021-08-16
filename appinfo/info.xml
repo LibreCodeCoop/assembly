@@ -7,12 +7,13 @@
     <description><![CDATA[Manage online asssembly]]></description>
     <version>0.1.1</version>
     <licence>agpl</licence>
-    <author mail="contact@librecode.coop" homepage="https://github.com/lyseontech">LibreCode</author>
+    <author mail="contact@librecode.coop" homepage="https://github.com/librecodecoop">Libre Code Coop</author>
     <namespace>Assembly</namespace>
     <category>tools</category>
-    <bugs>https://github.com/lyseontech/assembly</bugs>
+    <bugs>https://github.com/librecodecoop/assembly</bugs>
     <dependencies>
-        <nextcloud min-version="18" max-version="20"/>
+        <nextcloud min-version="18" max-version="21"/>
+        <database>pgsql</database>
     </dependencies>
     <navigations>
         <navigation>
@@ -23,5 +24,7 @@
     <commands>
         <command>OCA\Assembly\Command\BbbRegistry</command>
         <command>OCA\Assembly\Command\Mutesi</command>
+        <command>OCA\Assembly\Command\JitsiEnable</command>
+        <command>OCA\Assembly\Command\JitsiDisable</command>
     </commands>
 </info>

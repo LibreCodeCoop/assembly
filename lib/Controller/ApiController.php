@@ -17,8 +17,8 @@ namespace OCA\Assembly\Controller;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use OCA\Assembly\Db\ReportMapper;
+use OCA\Assembly\Service\ReportService;
 use \OCP\IRequest;
-use \OCP\IUserSession;
 use \OCP\AppFramework\ApiController as BaseApiController;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
@@ -37,71 +37,41 @@ class ApiController extends BaseApiController
     /** @var LoggerInterface */
     protected $logger;
     /**
-     * @var IUserSession
-     */
-    private $userSession;
-    /**
      * @var ReportMapper
      */
     private $ReportMapper;
+    /** @var ReportService */
+    private $ReportService;
 
-
-
-    /**
-     * ApiController constructor.
-     *
-     * Stores the user session to be able to leverage the user in further methods
-     *
-     * @param string        $appName        The name of the app
-     * @param IRequest      $request        The request
-     * @param IUserSession  $userSession    The user session
-     */
     public function __construct($appName,
                             IRequest $request,
-                            IUserSession $userSession,
                             ReportMapper $ReportMapper,
+                            ReportService $ReportService,
                             IDBConnection $db,
                             LoggerInterface $logger)
     {
         parent::__construct($appName, $request);
-        $this->userSession = $userSession;
         $this->ReportMapper =  $ReportMapper;
+        $this->ReportService =  $ReportService;
         $this->db = $db;
         $this->logger = $logger;
     }
 
     /**
-     * @return IUser
-     */
-    protected function getUser()
-    {
-        return $this->userSession->getUser();
-    }
-
-    /**
-     * @return string
-     */
-    protected function getUserId()
-    {
-        return $this->getUser()->getUID();
-    }
-
-    /**
-     * @PublicPage
      * @NoCSRFRequired
-     * @CORS
+     * @NoAdminRequired
      *
      * @return array
      */
-    public function report($formId)
+    public function report($formId, $groupId)
     {
-        return $this->ReportMapper->getResult($this->getUserId(), $formId);
+        $return = $this->ReportService->getReport($formId, $groupId);
+        return new DataResponse($return, Http::STATUS_OK);
     }
 
     /**
-     * @PublicPage
      * @NoCSRFRequired
-     * @CORS
+     * @NoAdminRequired
      *
      * @return array
      */
@@ -111,9 +81,8 @@ class ApiController extends BaseApiController
     }
 
     /**
-     * @PublicPage
      * @NoCSRFRequired
-     * @CORS
+     * @NoAdminRequired
      *
      * @return array
      */
@@ -159,5 +128,17 @@ class ApiController extends BaseApiController
             return new DataResponse(array('msg' => 'Participant already registered.'), Http::STATUS_FORBIDDEN);
         }
         return new DataResponse(array('msg' => 'Success'), Http::STATUS_CREATED);
+    }
+
+    /**
+     * @NoCSRFRequired
+     * @NoAdminRequired
+     *
+     * @return array
+     */
+    public function dashboard()
+    {
+        $return = $this->ReportService->getDashboard();
+        return new DataResponse($return, Http::STATUS_OK);
     }
 }

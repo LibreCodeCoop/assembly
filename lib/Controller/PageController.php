@@ -1,47 +1,32 @@
 <?php
 namespace OCA\Assembly\Controller;
 
-use OC\AppFramework\Services\AppConfig;
 use OCA\Assembly\Db\ReportMapper;
+use OCA\Assembly\Service\ReportService;
 use OCP\IRequest;
 use OCP\AppFramework\Http\TemplateResponse;
-use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Controller;
-use OCP\AppFramework\Http\ContentSecurityPolicy;
-use OCP\AppFramework\Services\IAppConfig;
 use OCP\IDBConnection;
-use OCP\IGroupManager;
-use OCP\IUser;
 use OCP\IUserSession;
 
 class PageController extends Controller {
     /** @var IDBConnection */
 	protected $db;
-
-	private $userId;
-	/** @var IGroupManager */
-	protected $groupManager;
-
+	/** @var ReportService */
+	protected $ReportService;
 	/** @var IUserSession */
-	protected $userSession;
-
-	/** @var AppConfig */
-	protected $appConfig;
+	private $userSession;
 
 	public function __construct(string $AppName,
 								IRequest $request,
-								string $UserId,
-								ReportMapper $ReportMapper,
-								IGroupManager $groupManager,
 								IUserSession $userSession,
-								IAppConfig $appConfig,
+								ReportMapper $ReportMapper,
+								ReportService $ReportService,
 								IDBConnection $db) {
 		parent::__construct($AppName, $request);
-		$this->userId = $UserId;
-		$this->groupManager = $groupManager;
-		$this->ReportMapper =  $ReportMapper;
 		$this->userSession = $userSession;
-		$this->appConfig = $appConfig;
+		$this->ReportMapper =  $ReportMapper;
+		$this->ReportService = $ReportService;
 		$this->db = $db;
 	}
 
@@ -56,39 +41,8 @@ class PageController extends Controller {
 	 * @NoCSRFRequired
 	 */
 	public function index() {
-		$user = $this->userSession->getUser();
-		if ($user instanceof IUser) {
-			$groups = $this->groupManager->getUserGroupIds($this->userSession->getUser());
-		} else {
-			$groups = [];
-		}
-		$data = $this->ReportMapper->getPoll($this->userId);
-		if ($this->appConfig->getAppValue('enable_mutesi')) {
-			$query = $this->db->getQueryBuilder();
-			$query->select(['url', 'meeting_time'])->from('assembly_participants', 'ap')
-				->join('ap', 'assembly_meetings', 'am', 'am.meeting_id = ap.meeting_id')
-				->where($query->expr()->eq('ap.uid', $query->createNamedParameter($this->userId)))
-				->andWhere($query->expr()->gt('am.meeting_time', $query->createNamedParameter(
-					time()-(60*60*24)
-				)))
-				->orderBy('ap.created_at', 'ASC');
-			$stmt = $query->execute();
-			$row = $stmt->fetch(\PDO::FETCH_ASSOC);
-			if ($row && $row['meeting_time'] < time()) {
-				$meetUrl = $row['url'];
-			} else {
-				$meetUrl = '/index.php/apps/assembly/videocall/' . ($row['meeting_id'] ?? 'wait');
-			}
-		} else {
-			$meetUrl = 'https://meet.jit.si/' . date('Ymd') . $groups[0];
-		}
-		return new TemplateResponse('assembly', 'content/index',
-			[
-				'data' => $data,
-				'group' => $groups,
-				'meetUrl' => $meetUrl
-			]
-		);  // templates/report.php
+		$return = $this->ReportService->getDashboard();
+		return new TemplateResponse('assembly', 'content/index', $return);
 
 	}
 
@@ -97,24 +51,8 @@ class PageController extends Controller {
 	 * @NoCSRFRequired
 	 */	
 	public function report($formId, $groupId) {
-
-		$data = $this->ReportMapper->getResult($this->userId, $formId);
-		$available = $this->ReportMapper->usersAvailable($groupId);
-		$responses = [];
-		$metadata['total'] = 0;
-		$metadata['available'] = count($available);
-		foreach ($data as $row) {
-			$responses[$row['response']] = $row['total'];
-			$metadata['total']+=$row['total'];
-		}
-		if($data){
-			$metadata['title'] = $data[0]['title'];
-		}
-		return new TemplateResponse('assembly', 'content/report', 
-			[
-				'responses'=>$responses,
-				'metadata'=>$metadata
-			] );  // templates/report.php
+		$return = $this->ReportService->getReport($formId, $groupId);
+		return new TemplateResponse('assembly', 'content/report', $return);
 	}	
 
 	/**
@@ -131,7 +69,7 @@ class PageController extends Controller {
 		if ($meetingId != 'wait') {
 			$query->andWhere($query->expr()->eq('am.meeting_id', $query->createNamedParameter($meetingId)));
 		}
-		$query->andWhere($query->expr()->eq('ap.uid', $query->createNamedParameter($this->userId)));
+		$query->andWhere($query->expr()->eq('ap.uid', $query->createNamedParameter($this->userSession->getUser()->getUID())));
 		$query->orderBy('ap.created_at', 'ASC');
 		$stmt = $query->execute();
 		$row = $stmt->fetch(\PDO::FETCH_ASSOC);
