@@ -8,7 +8,7 @@
  * it's instantiated in there
  */
 return [
-    'routes' => [
+	'routes' => [
 		// API
 		['name' => 'api#report', 'url' => '/api/v1/report/{formId}/{groupId}', 'verb' => 'GET'],
 		['name' => 'api#usersAvailable', 'url' => '/api/v1/usersAvailable', 'verb' => 'GET'],
@@ -19,5 +19,5 @@ return [
 		['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
 		['name' => 'page#report', 'url' => '/report/{formId}/{groupId}', 'verb' => 'GET'],
 		['name' => 'page#videocall', 'url' => '/videocall/{meetingId}', 'verb' => 'GET'],
-    ]
+	]
 ];
