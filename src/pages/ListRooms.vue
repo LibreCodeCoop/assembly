@@ -18,18 +18,27 @@
 						</div>
 						<div class="flex-row author">
 							<p class="icon-user"></p>
-							<span>Por {{ room.author }}</span>
+							<span>
+								Por
+								{{
+									room.created_by.display_name
+										? room.created_by.display_name
+										: room.created_by.user_id
+								}}
+							</span>
 						</div>
-						<div class="flex-row n-call">
+						<div :class="'flex-row n-call ' + room.status">
 							<p class="icon-category-monitoring" />
-							<span> {{ room.call }}</span>
+							<span> {{ normalizeStatus(room.status) }}</span>
 						</div>
 						<div class="flex-row hour">
 							<p class="icon-calendar" />
-							<span>{{ room.hour }}</span>
+							<span>{{ formatDate(room.date) }}</span>
 						</div>
 
-						<button class="primary">Acessar</button>
+						<button class="primary" @click="redirect(url)">
+							Acessar
+						</button>
 					</div>
 				</div>
 			</div>
@@ -38,75 +47,85 @@
 </template>
 <script lang="ts">
 import Vue from "vue";
+import { format } from "date-fns";
 import axios from "@nextcloud/axios";
 import { generateUrl } from "@nextcloud/router";
+import store from "@/store";
+import { AddMeet, AddMeets } from "@/store/modules/meet/types";
+import { IMeet, status } from "@/entities/Meet";
 
 export default Vue.extend({
 	name: "Room",
 
 	data: () => ({
 		url: "",
-		calendar: [
-			{
-				day: 13,
-				dDay: "Terça",
-				today: true,
-				rooms: [
-					{
-						id: 1,
-						description: "Assembleia Geral orginaria",
-						author: "Vinicios Gomes",
-						call: "1a Chamada",
-						hour: "09:10",
-						url: "getTi",
-					},
-					{
-						id: 2,
-						description: "Assembleia Geral orginaria",
-						author: "Vinicios Gomes",
-						call: "1a Chamada",
-						hour: "09:10",
-						url: "getTi",
-					},
-				],
-			},
-			{
-				day: 14,
-				dDay: "Quarta",
-				rooms: [
-					{
-						id: 1,
-						description: "Assembleia Geral orginaria",
-						author: "Vinicios Gomes",
-						call: "1a Chamada",
-						hour: "10:12",
-						url: "getTi",
-					},
-					{
-						id: 2,
-						description: "Assembleia Geral orginaria",
-						author: "Vinicios Gomes",
-						call: "1a Chamada",
-						hour: "09:10",
-						url: "getTi",
-					},
-				],
-			},
-		],
 	}),
 	created() {
 		this.getData();
+		this.fetchMockMeets();
 	},
 	methods: {
+		async fetchMockMeets() {
+			const meetList: IMeet[] = [
+				{
+					id: 1,
+					date: "2021-08-16 16:09:01",
+					created_at: "2021-08-15 15:02:23",
+					created_by: {
+						display_name: "nextcloud",
+						user_id: "nextcloud User ID",
+					},
+					description: "Assembleia Geral orginaria",
+					meetUrl: "getTi",
+					status: "waiting",
+				},
+				{
+					id: 2,
+					date: "2021-08-16 16:09:01",
+					created_at: "2021-08-15 15:02:23",
+					created_by: {
+						display_name: "nextcloud",
+						user_id: "nextcloud User ID",
+					},
+					description: "Assembleia Geral orginaria",
+					meetUrl: "getTi",
+					status: "waiting",
+				},
+				{
+					id: 3,
+					date: "2021-08-17 16:09:01",
+					created_at: "2021-08-17 15:02:23",
+					created_by: {
+						display_name: "nextcloud",
+						user_id: "nextcloud User ID",
+					},
+					description: "Assembleia Geral orginaria",
+					meetUrl: "getTi",
+					status: "waiting",
+				},
+			];
+
+			await store.commit(new AddMeets(meetList));
+		},
 		async getData() {
 			try {
 				const response = await axios.get(
 					generateUrl("/apps/assembly/api/v1/dashboard")
 				);
 				this.url = response.data.meetUrl;
+				await store.commit(new AddMeet(response.data.meetUrl));
 			} catch (err) {
 				console.error(err.response);
 			}
+		},
+		normalizeStatus(str) {
+			return str.replace("_", " ");
+		},
+		redirect() {
+			this.$router.push({ name: "meet" });
+		},
+		formatDate(date) {
+			return format(new Date(date), "dd/MM/yyyy HH:mm");
 		},
 	},
 });
@@ -176,6 +195,25 @@ export default Vue.extend({
 							border-left: 2px solid #4a4683;
 							background-color: #f6faff;
 						}
+					}
+					.n-call {
+						span {
+							&::first-letter {
+								text-transform: uppercase;
+							}
+						}
+					}
+					.waiting {
+						color: #ffc107 !important;
+					}
+					.done {
+						color: #28a745 !important;
+					}
+					.cancelled {
+						color: #dc3545 !important;
+					}
+					.in_progress {
+						color: #007bff !important;
 					}
 				}
 			}
