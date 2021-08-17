@@ -3,7 +3,7 @@ export interface IQuestion {
 	total: number;
 }
 
-export interface IVotations {
+export interface IVotation {
 	title: string;
 	available: number;
 	description: string;

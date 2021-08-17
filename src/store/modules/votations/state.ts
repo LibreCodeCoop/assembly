@@ -1,11 +1,22 @@
-import { IVotations } from "@/entities/Votations";
+import { IVotation } from "@/entities/Votations";
 
 export interface VotationsState {
-	votations: IVotations[] | null;
+	votation: IVotation | null;
+	votations: IVotation[] | null;
 }
 
 export const initialState = (): VotationsState => {
 	return {
 		votations: null,
+		votation: {
+			available: 0,
+			description: "",
+			finished_at: "",
+			id: 0,
+			responses: [],
+			status: "",
+			title: "",
+			voted: false,
+		},
 	};
 };
