@@ -2,7 +2,6 @@
 namespace OCA\Assembly\Db;
 
 use Doctrine\DBAL\ParameterType;
-use Doctrine\DBAL\Query\Expression\ExpressionBuilder;
 use OC\DB\QueryBuilder\Literal;
 use OC\DB\QueryBuilder\QueryFunction;
 use OCP\AppFramework\Db\QBMapper;
@@ -96,5 +95,60 @@ class ReportMapper extends QBMapper
             return $query
                 ->execute()
                 ->fetchAll();
+    }
+
+    public function getMeetings($userId)
+    {
+        $qb = $this->db->getQueryBuilder();
+
+        $query = $qb->select('m.meeting_id')
+            ->selectAlias('m.meeting_time', 'date')
+            ->addSelect('m.created_at')
+            ->addSelect('m.created_by')
+            ->addSelect('m.slug')
+            ->addSelect('u.displayname')
+            ->selectAlias('a.data', 'user_data')
+            ->addSelect('m.description')
+            ->addSelect('p.url')
+            ->addSelect('m.deleted_at')
+            ->addSelect('m.status')
+            ->from('assembly_meetings', 'm')
+            ->join('m', 'assembly_participants', 'p', 'm.meeting_id = p.meeting_id')
+            ->join('m', 'users', 'u', 'u.uid = m.created_by')
+            ->join('m', 'accounts', 'a', 'a.uid = m.created_by')
+            ->where('u.uid = :userId')
+            ->orderBy('m.meeting_time', 'DESC')
+            ->setParameter('userId', $userId);
+        $stmt = $query->execute();
+        $return = [];
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            if (!empty($row['date'])) {
+                $date = new \DateTime();
+                $date->createFromFormat('U', $row['date']);
+                $row['date'] = $date->format('Y-m-d H:i');
+            }
+
+            $created_at = new \DateTime();
+            $created_at->createFromFormat('U', $row['created_at']);
+            $row['created_at'] = $created_at->format('Y-m-d H:i');
+
+            $user = json_decode($row['user_data']);
+            unset($row['user_data']);
+            $row['created_by'] = [
+                'displayName' => $user->displayname->value,
+                'email' => $user->email->value,
+                'user_id' => $row['created_by']
+            ];
+            unset($row['user_data'], $row['displayname']);
+
+            if ($row['deleted_at']) {
+                $row['status'] = 'cancelled';
+            } elseif (empty($row['status'])) {
+                $row['status'] = 'waiting';
+            }
+
+            $return[] = $row;
+        }
+        return $return;
     }
 }
