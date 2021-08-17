@@ -52,7 +52,7 @@
 								<td>
 									<button
 										class="primary"
-										@click="redirect(url)"
+										@click="redirect(meet)"
 									>
 										Acessar
 									</button>
@@ -191,7 +191,8 @@ export default Vue.extend({
 			return str.replace("_", " ");
 		},
 
-		redirect() {
+		async redirect(meet: IMeet) {
+			await store.commit(new AddMeet(meet));
 			this.$router.push({ name: "meet" });
 		},
 
