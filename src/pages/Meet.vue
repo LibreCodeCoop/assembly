@@ -18,12 +18,24 @@
 			<div class="questions">
 				<div v-for="votation in votations" :key="votation.id">
 					<h1>{{ votation.title }}</h1>
-					<button>{{ t("assembly", "View") }}</button>
+					<button @click="selectVotation(votation.id)">
+						{{ t("assembly", "View") }}
+					</button>
 				</div>
 			</div>
 			<div class="results">
 				<h1>{{ t("assembly", "Results") }}</h1>
-				<div>s</div>
+				<div v-show="!voted">
+					<!-- //Votacao nao votou -->
+					<!-- Resultado votado -->
+					{{ votation }}
+				</div>
+				<div v-show="voted">
+					<li v-for="vote in votation.responses" :key="vote.text">
+						<p>{{ vote.text }}</p>
+						<span>{{ vote.total }}</span>
+					</li>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -32,19 +44,34 @@
 import Vue from "vue";
 import store from "@/store";
 import Meet from "@/components/Meet/Meet.vue";
-import { AddVotations } from "@/store/modules/votations/types";
+import { AddVotation, AddVotations } from "@/store/modules/votations/types";
 export default Vue.extend({
 	components: { Meet },
 	data: () => ({
 		showMeet: false,
 		viewbtn: true,
+		showVoted: false,
 	}),
 	computed: {
 		url() {
 			return store.state.meet.meet.meetUrl;
 		},
+		voted() {
+			if (this.showVoted) {
+				if (this.votation !== null) {
+					if (this.votation.voted) {
+						return this.votation.voted;
+					}
+					return false;
+				}
+			}
+			return false;
+		},
 		votations() {
-			return store.state.votations;
+			return store.state.votations.votations;
+		},
+		votation() {
+			return store.state.votations.votation;
 		},
 	},
 	created() {
@@ -69,7 +96,7 @@ export default Vue.extend({
 					],
 				},
 				{
-					title: "Algum Title",
+					title: "Algum Title2",
 					available: 19,
 					description: "Form Desc",
 					id: 124,
@@ -78,13 +105,21 @@ export default Vue.extend({
 					voted: false,
 					responses: [
 						{
-							text: "Response text",
-							total: 19,
+							text: "Response TT",
+							total: 39,
 						},
 					],
 				},
 			];
 			await store.commit(new AddVotations(votations));
+		},
+		selectVotation(id) {
+			this.votations.forEach(async (element) => {
+				if (element.id === id) {
+					await store.commit(new AddVotation(element));
+				}
+			});
+			this.showVoted = true;
 		},
 		enableMeet() {
 			this.showMeet = true;
@@ -137,6 +172,11 @@ export default Vue.extend({
 		.results {
 			width: 70%;
 			height: 100%;
+			padding: 20px;
+
+			h1 {
+				font-weight: bold;
+			}
 		}
 	}
 }
