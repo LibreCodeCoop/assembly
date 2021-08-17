@@ -7,16 +7,6 @@
 					:title="t('assembly', 'Room')"
 					icon="icon-video"
 				/>
-				<AppNavigationItem
-					:to="{ name: 'votation' }"
-					:title="t('assembly', 'Votations')"
-					icon="icon-category-organization"
-				/>
-				<AppNavigationItem
-					:to="{ name: 'results' }"
-					:title="t('assembly', 'Results')"
-					icon="icon-clippy"
-				/>
 			</template>
 		</AppNavigation>
 		<AppContent :class="{ 'icon-loading': loading }">

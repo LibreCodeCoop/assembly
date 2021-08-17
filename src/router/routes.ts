@@ -2,18 +2,13 @@ import { RouteConfig } from "vue-router";
 
 export const routes: Array<RouteConfig> = [
 	{
-		path: "#room",
-		component: () => import("@/views/Room.vue"),
+		path: "#list-rooms",
+		component: () => import("@/pages/ListRooms.vue"),
 		name: "room",
 	},
 	{
-		path: "#votation",
-		component: () => import("@/views/Votation.vue"),
-		name: "votation",
-	},
-	{
-		path: "#results",
-		component: () => import("@/views/Results.vue"),
-		name: "results",
+		path: "#meet",
+		component: () => import("@/pages/Meet.vue"),
+		name: "meet",
 	},
 ];
