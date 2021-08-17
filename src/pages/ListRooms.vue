@@ -47,12 +47,13 @@
 </template>
 <script lang="ts">
 import Vue from "vue";
+import { mapState } from "vuex";
 import { format } from "date-fns";
 import axios from "@nextcloud/axios";
 import { generateUrl } from "@nextcloud/router";
 import store from "@/store";
 import { AddMeet, AddMeets } from "@/store/modules/meet/types";
-import { IMeet, status } from "@/entities/Meet";
+import { IMeet } from "@/entities/Meet";
 
 export default Vue.extend({
 	name: "Room",
@@ -63,6 +64,9 @@ export default Vue.extend({
 	created() {
 		this.getData();
 		this.fetchMockMeets();
+	},
+	computed: {
+		...mapState({ meets: "meet/meets" }),
 	},
 	methods: {
 		async fetchMockMeets() {
@@ -107,6 +111,7 @@ export default Vue.extend({
 
 			await store.commit(new AddMeets(meetList));
 		},
+
 		async getData() {
 			try {
 				const response = await axios.get(
@@ -118,12 +123,15 @@ export default Vue.extend({
 				console.error(err.response);
 			}
 		},
+
 		normalizeStatus(str) {
 			return str.replace("_", " ");
 		},
+
 		redirect() {
 			this.$router.push({ name: "meet" });
 		},
+
 		formatDate(date) {
 			return format(new Date(date), "dd/MM/yyyy HH:mm");
 		},

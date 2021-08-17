@@ -7,16 +7,6 @@ export const routes: Array<RouteConfig> = [
 		name: "room",
 	},
 	{
-		path: "#votation",
-		component: () => import("@/pages/Votation.vue"),
-		name: "votation",
-	},
-	{
-		path: "#results",
-		component: () => import("@/pages/Results.vue"),
-		name: "results",
-	},
-	{
 		path: "#meet",
 		component: () => import("@/pages/Meet.vue"),
 		name: "meet",
