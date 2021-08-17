@@ -141,4 +141,16 @@ class ApiController extends BaseApiController
         $return = $this->ReportService->getDashboard();
         return new DataResponse($return, Http::STATUS_OK);
     }
+
+    /**
+     * @NoCSRFRequired
+     * @NoAdminRequired
+     *
+     * @return array
+     */
+    public function getMeetings()
+    {
+        $return = $this->ReportService->getMeetings();
+        return new DataResponse($return, Http::STATUS_OK);
+    }
 }

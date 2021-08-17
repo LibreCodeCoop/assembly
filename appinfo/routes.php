@@ -14,6 +14,7 @@ return [
 		['name' => 'api#usersAvailable', 'url' => '/api/v1/usersAvailable', 'verb' => 'GET'],
 		['name' => 'api#dashboard', 'url' => '/api/v1/dashboard', 'verb' => 'GET'],
 		['name' => 'api#meetWebhook', 'url' => '/api/v1/meetWebhook', 'verb' => 'POST'],
+		['name' => 'api#getMeetings', 'url' => '/api/v1/meet', 'verb' => 'GET'],
 
 		// Pages
 		['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
