@@ -24,7 +24,6 @@
 
 <script lang="ts">
 import Vue from "vue";
-import axios from "@nextcloud/axios";
 import {
 	Content,
 	AppNavigation,

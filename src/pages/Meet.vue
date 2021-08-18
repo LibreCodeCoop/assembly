@@ -44,17 +44,23 @@
 			"
 			@click="toggleVotationsSide"
 		></button>
+		<Modal
+			v-show="showForm"
+			:title="t('assembly', 'Votações')"
+			@close="closeModal"
+		>
+			<h1>Olá Eu sou um modal</h1>
+		</Modal>
 	</div>
 </template>
 <script lang="ts">
 import Vue from "vue";
-import axios from "@nextcloud/axios";
 import store from "@/store";
+import { Modal } from "@nextcloud/vue";
 import Meet from "@/components/Meet/Meet.vue";
 import { AddVotation, AddVotations } from "@/store/modules/votations/types";
-import { generateUrl } from "@nextcloud/router";
 export default Vue.extend({
-	components: { Meet },
+	components: { Meet, Modal },
 	data: () => ({
 		showMeet: false,
 		viewbtn: true,
@@ -64,6 +70,11 @@ export default Vue.extend({
 	computed: {
 		url() {
 			return store.state.meet.meet.meetUrl;
+		},
+		showForm() {
+			return store.state.votations.votations.some(
+				(elem) => elem.status === "enabled"
+			);
 		},
 		voted() {
 			if (this.showVoted) {
@@ -85,16 +96,8 @@ export default Vue.extend({
 	},
 	created() {
 		this.fetchMockVotations();
-		this.getData();
 	},
 	methods: {
-		async getData() {
-			const response2 = await axios.get(
-				generateUrl("apps/forms/api/v1.1/form/1")
-			);
-			console.info("forms2: ", response2);
-		},
-
 		toggleVotationsSide() {
 			this.showVotations = !this.showVotations;
 		},
@@ -105,10 +108,10 @@ export default Vue.extend({
 					title: "Algum Title",
 					available: 19,
 					description: "Form Desc",
-					id: 123,
-					status: "enabled",
-					finished_at: "2021-03-03 11:30:20",
-					voted: false,
+					formId: 123,
+					status: "disabled",
+					finishedAt: "2021-03-03 11:30:20",
+					voted: true,
 					responses: [
 						{
 							text: "Response text",
@@ -120,9 +123,9 @@ export default Vue.extend({
 					title: "Algum Title2",
 					available: 19,
 					description: "Form Desc",
-					id: 124,
+					formId: 124,
 					status: "enabled",
-					finished_at: "2021-03-03 11:30:20",
+					finishedAt: "2021-03-03 11:30:20",
 					voted: false,
 					responses: [
 						{
@@ -132,8 +135,10 @@ export default Vue.extend({
 					],
 				},
 			];
+
 			await store.commit(new AddVotations(votations));
 		},
+
 		selectVotation(id) {
 			this.votations.forEach(async (element) => {
 				if (element.id === id) {
@@ -142,9 +147,14 @@ export default Vue.extend({
 			});
 			this.showVoted = true;
 		},
+
 		enableMeet() {
 			this.showMeet = true;
 			this.viewbtn = false;
+		},
+
+		closeModal() {
+			this.showModal = false;
 		},
 	},
 });
