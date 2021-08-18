@@ -63,18 +63,6 @@ class ApiController extends BaseApiController
      *
      * @return array
      */
-    public function getReportUsingGroupId($formId, $groupId)
-    {
-        $return = $this->ReportService->getReportUsingGroupId($formId, $groupId);
-        return new DataResponse($return, Http::STATUS_OK);
-    }
-
-    /**
-     * @NoCSRFRequired
-     * @NoAdminRequired
-     *
-     * @return array
-     */
     public function usersAvailable($groupId)
     {
         return $this->ReportMapper->usersAvailable($groupId);

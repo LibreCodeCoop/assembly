@@ -169,29 +169,6 @@ class ReportService
             '?jwt=' . $token->toString();
     }
 
-    public function getReportUsingGroupId($formId, $groupId)
-    {
-        $data = $this->ReportMapper->getResult($this->userSession->getUser()->getUID(), $formId);
-        $available = $this->ReportMapper->usersAvailable($groupId);
-        $responses = [];
-        $metadata['total'] = 0;
-        $metadata['available'] = count($available);
-        foreach ($data as $row) {
-            $responses[] = [
-                'text' => $row['response'],
-                'total' => $row['total']
-            ];
-            $metadata['total']+=$row['total'];
-        }
-        if($data){
-            $metadata['title'] = $data[0]['title'];
-        }
-        return [
-            'responses' => $responses,
-            'metadata' => $metadata
-        ];
-    }
-
     public function getMeetings()
     {
         $user = $this->userSession->getUser();
