@@ -138,9 +138,8 @@ class ReportService
             '?jwt=' . $token->toString();
     }
 
-    public function getReport($formId, $groupId)
+    public function getReportUsingGroupId($formId, $groupId)
     {
-
         $data = $this->ReportMapper->getResult($this->userSession->getUser()->getUID(), $formId);
         $available = $this->ReportMapper->usersAvailable($groupId);
         $responses = [];

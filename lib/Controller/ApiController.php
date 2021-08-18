@@ -65,7 +65,7 @@ class ApiController extends BaseApiController
      */
     public function getReportUsingGroupId($formId, $groupId)
     {
-        $return = $this->ReportService->getReport($formId, $groupId);
+        $return = $this->ReportService->getReportUsingGroupId($formId, $groupId);
         return new DataResponse($return, Http::STATUS_OK);
     }
 
