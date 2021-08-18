@@ -11,8 +11,8 @@ export const initialState = (): VotationsState => {
 		votation: {
 			available: 0,
 			description: "",
-			finished_at: "",
-			id: 0,
+			finishedAt: "",
+			formId: 0,
 			responses: [],
 			status: "",
 			title: "",
