@@ -133,10 +133,10 @@ export default Vue.extend({
 
 		async getData() {
 			try {
-				const response = await axios.get(
+				const { data } = await axios.get(
 					generateUrl("/apps/assembly/api/v1/meet")
 				);
-				await store.commit(new AddMeets(response.data));
+				await store.commit(new AddMeets(data));
 			} catch (err) {
 				console.error(err.response);
 			}
