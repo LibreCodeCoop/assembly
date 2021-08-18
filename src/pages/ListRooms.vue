@@ -62,12 +62,18 @@
 					</table>
 				</div>
 			</div>
+			<EmptyContent v-show="filterByDate === false">
+				<template #desc>
+					{{ t("assembly", "You don't have Meets") }}
+				</template>
+			</EmptyContent>
 		</div>
 	</div>
 </template>
 <script lang="ts">
 import Vue from "vue";
 import { format } from "date-fns";
+import { EmptyContent } from "@nextcloud/vue";
 import { ptBR } from "date-fns/locale";
 import axios from "@nextcloud/axios";
 import { generateUrl } from "@nextcloud/router";
@@ -78,95 +84,45 @@ import { IMeet } from "@/entities/Meet";
 export default Vue.extend({
 	name: "Room",
 
+	components: {
+		EmptyContent,
+	},
+
 	data: () => ({
 		url: "",
 	}),
 	created() {
 		this.getData();
-		this.fetchMockMeets();
-		console.info(this.filterByDate);
 	},
 	computed: {
 		meets() {
 			return store.state.meet.meets;
 		},
 		filterByDate() {
-			const allDays = this.meets
-				.map((item) => {
-					const date = item.date.split(" ")[0];
-					return date;
-				})
-				.filter((item, index, self) => {
-					return self.indexOf(item) == index;
-				})
-				.map((arr) => {
-					return { day: arr, meets: [] };
+			if (this.meets) {
+				const allDays = this.meets
+					.map((item) => {
+						const date = item.date.split(" ")[0];
+						return date;
+					})
+					.filter((item, index, self) => {
+						return self.indexOf(item) == index;
+					})
+					.map((arr) => {
+						return { day: arr, meets: [] };
+					});
+				return allDays.map((day) => {
+					const meets = this.meets.filter((meet) => {
+						return meet.date.split(" ")[0] == day.day;
+					});
+					day.meets = meets;
+					return day;
 				});
-			return allDays.map((day) => {
-				const meets = this.meets.filter((meet) => {
-					return meet.date.split(" ")[0] == day.day;
-				});
-				day.meets = meets;
-				return day;
-			});
+			}
+			return false;
 		},
 	},
 	methods: {
-		async fetchMockMeets() {
-			const meetList: IMeet[] = [
-				{
-					id: 1,
-					date: "2021-08-16 16:09:01",
-					created_at: "2021-08-15 15:02:23",
-					created_by: {
-						display_name: "nextcloud",
-						user_id: "nextcloud User ID",
-					},
-					description: "Assembleia Geral orginaria",
-					meetUrl: "getTi",
-					status: "done",
-				},
-				{
-					id: 2,
-					date: "2021-08-16 16:09:01",
-					created_at: "2021-08-15 15:02:23",
-					created_by: {
-						display_name: "nextcloud",
-						user_id: "nextcloud User ID",
-					},
-					description: "Assembleia Geral orginaria",
-					meetUrl: "getTi",
-					status: "in_progress",
-				},
-				{
-					id: 3,
-					date: "2021-08-17 16:09:01",
-					created_at: "2021-08-17 15:02:23",
-					created_by: {
-						display_name: "nextcloud",
-						user_id: "nextcloud User ID",
-					},
-					description: "Assembleia Geral orginaria",
-					meetUrl: "getTi",
-					status: "cancelled",
-				},
-				{
-					id: 4,
-					date: "2021-08-17 16:09:01",
-					created_at: "2021-08-17 15:02:23",
-					created_by: {
-						display_name: "nextcloud",
-						user_id: "nextcloud User ID",
-					},
-					description: "Assembleia Geral orginaria",
-					meetUrl: "getTi",
-					status: "waiting",
-				},
-			];
-
-			await store.commit(new AddMeets(meetList));
-		},
-
 		returnDayOfWeek(date) {
 			return format(new Date(date), "EEE", { locale: ptBR });
 		},
@@ -178,10 +134,9 @@ export default Vue.extend({
 		async getData() {
 			try {
 				const response = await axios.get(
-					generateUrl("/apps/assembly/api/v1/dashboard")
+					generateUrl("/apps/assembly/api/v1/meet")
 				);
-				this.url = response.data.meetUrl;
-				await store.commit(new AddMeet(response.data.meetUrl));
+				await store.commit(new AddMeets(response.data));
 			} catch (err) {
 				console.error(err.response);
 			}
