@@ -93,7 +93,7 @@ class ReportMapper extends QBMapper
         return $return;
     }
 
-    public function getPoll($userId)
+    public function getPool($userId)
     {
             $qb = $this->db->getQueryBuilder();
             $query = $qb->select('f.title')

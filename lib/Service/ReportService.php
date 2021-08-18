@@ -65,7 +65,7 @@ class ReportService
         if ($user instanceof IUser) {
             $groups = $this->groupManager->getUserGroupIds($user);
         }
-        $return['data'] = $this->ReportMapper->getPoll($user->getUID());
+        $return['data'] = $this->ReportMapper->getPool($user->getUID());
         foreach ($return['data'] as $key => $item) {
             $return['data'][$key]['vote_url'] = $this->urlGenerator->linkToRoute(
                 'forms.page.goto_form',
