@@ -128,18 +128,30 @@ class ReportMapper extends QBMapper
                 $row['date'] = $date->format('Y-m-d H:i');
             }
 
+            $row['deletedAt'] = $row['deleted_at'];
+            if (!empty($row['deletedAt'])) {
+                $date = new \DateTime();
+                $date->createFromFormat('U', $row['deletedAt']);
+                $row['deletedAt'] = $date->format('Y-m-d H:i');
+            }
+            unset($row['deleted_at']);
+
             $created_at = new \DateTime();
             $created_at->createFromFormat('U', $row['created_at']);
-            $row['created_at'] = $created_at->format('Y-m-d H:i');
+            $row['createdAt'] = $created_at->format('Y-m-d H:i');
+            unset($row['created_at']);
 
             $user = json_decode($row['user_data']);
             unset($row['user_data']);
-            $row['created_by'] = [
+            $row['createdBy'] = [
                 'displayName' => $user->displayname->value,
                 'email' => $user->email->value,
-                'user_id' => $row['created_by']
+                'userId' => $row['created_by']
             ];
-            unset($row['user_data'], $row['displayname']);
+            unset($row['user_data'], $row['displayname'], $row['created_by']);
+
+            $row['meetingId'] = $row['meeting_id'];
+            unset($row['meeting_id']);
 
             if ($row['deleted_at']) {
                 $row['status'] = 'cancelled';
