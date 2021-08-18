@@ -1,5 +1,5 @@
 <template>
-	<div class="container">
+	<div class="container-meet">
 		<div :class="showVotations === true ? 'meet' : 'meet-100'">
 			<button
 				v-show="viewbtn"
@@ -44,21 +44,56 @@
 			"
 			@click="toggleVotationsSide"
 		></button>
-		<Modal
-			v-show="showForm"
-			:title="t('assembly', 'Votações')"
-			@close="closeModal"
-		>
-			<h1>Olá Eu sou um modal</h1>
+		<Modal v-show="showForm" :title="t('assembly', 'Votações')" v-if="form">
+			<div class="container-modal">
+				<header>
+					<h1>{{ form.title }}</h1>
+					<span>{{ form.description }}</span>
+				</header>
+				<form ref="form" @submit.prevent="onSubmit">
+					<ul>
+						<li
+							class="questions"
+							v-for="question in form.questions"
+							:key="question.id"
+						>
+							<h1>{{ question.text }}</h1>
+							<ul>
+								<li
+									v-for="(option, index) in question.options"
+									:key="index"
+									class="options"
+								>
+									<input
+										:id="option.id"
+										type="radio"
+										:name="question.id"
+										v-model="answers[question.id]"
+										:value="option.id"
+									/>
+									<label :for="option.id">{{
+										option.text
+									}}</label>
+								</li>
+							</ul>
+						</li>
+					</ul>
+					<button type="submit">{{ t("assembly", "Votar") }}</button>
+				</form>
+			</div>
 		</Modal>
 	</div>
 </template>
 <script lang="ts">
 import Vue from "vue";
 import store from "@/store";
+import axios from "@nextcloud/axios";
 import { Modal } from "@nextcloud/vue";
 import Meet from "@/components/Meet/Meet.vue";
 import { AddVotation, AddVotations } from "@/store/modules/votations/types";
+import { generateOcsUrl, generateUrl } from "@nextcloud/router";
+import { AddForm } from "@/store/modules/form/types";
+import { IVotation } from "@/entities/Votations";
 export default Vue.extend({
 	components: { Meet, Modal },
 	data: () => ({
@@ -66,10 +101,15 @@ export default Vue.extend({
 		viewbtn: true,
 		showVoted: false,
 		showVotations: false,
+		questionSelectedOption: null,
+		answers: {},
 	}),
 	computed: {
 		url() {
 			return store.state.meet.meet.meetUrl;
+		},
+		form() {
+			return store.state.form.form;
 		},
 		showForm() {
 			return store.state.votations.votations.some(
@@ -102,14 +142,51 @@ export default Vue.extend({
 			this.showVotations = !this.showVotations;
 		},
 
+		async onSubmit() {
+			this.loading = true;
+			try {
+				await axios.post(
+					generateOcsUrl("apps/forms/api/v1.1/submission/insert"),
+					{
+						formId: this.form.id,
+						answers: this.answers,
+					}
+				);
+				this.closeModal();
+				// this.getData();
+			} catch (error) {
+				console.error(error);
+			}
+		},
+
+		async getForm(id) {
+			const response = await axios.get(
+				generateOcsUrl(`/apps/forms/api/v1/form/${id}`)
+			);
+			await store.commit(new AddForm(response.data.ocs.data));
+		},
+
+		async getData() {
+			const response = await axios.get(
+				generateUrl("/apps/assembly/api/v1/pools")
+			);
+			const pools: IVotation[] = response.data.pools;
+			pools.some((elem) => {
+				if (elem.status === "enabled") {
+					this.getForm(elem.formId);
+				}
+			});
+			await store.commit(new AddVotations(pools));
+		},
+
 		async fetchMockVotations() {
 			const votations = [
 				{
 					title: "Algum Title",
 					available: 19,
 					description: "Form Desc",
-					formId: 123,
-					status: "disabled",
+					formId: 5,
+					status: "enabled",
 					finishedAt: "2021-03-03 11:30:20",
 					voted: true,
 					responses: [
@@ -123,8 +200,8 @@ export default Vue.extend({
 					title: "Algum Title2",
 					available: 19,
 					description: "Form Desc",
-					formId: 124,
-					status: "enabled",
+					formId: 4,
+					status: "disabled",
 					finishedAt: "2021-03-03 11:30:20",
 					voted: false,
 					responses: [
@@ -135,6 +212,12 @@ export default Vue.extend({
 					],
 				},
 			];
+
+			votations.some((elem) => {
+				if (elem.status === "enabled") {
+					this.getForm(elem.formId);
+				}
+			});
 
 			await store.commit(new AddVotations(votations));
 		},
@@ -152,15 +235,15 @@ export default Vue.extend({
 			this.showMeet = true;
 			this.viewbtn = false;
 		},
-
-		closeModal() {
-			this.showModal = false;
-		},
 	},
 });
 </script>
-<style lang="scss" scoped>
-.container {
+<style lang="scss">
+.modal-container {
+	width: 50% !important;
+	min-height: 50% !important;
+}
+.container-meet {
 	display: flex;
 	width: 100%;
 	height: 100%;
@@ -232,6 +315,84 @@ export default Vue.extend({
 	}
 	.btn-position-true {
 		bottom: 50.2%;
+	}
+}
+.container-modal {
+	width: 100%;
+	display: flex;
+	min-width: 50%;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
+	header {
+		width: 80%;
+		margin-top: 20px;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: flex-start;
+
+		h1 {
+			font-size: 1rem;
+			font-weight: bold;
+
+			&::first-letter {
+				text-transform: uppercase;
+			}
+		}
+		span {
+			font-size: 0.8rem;
+			opacity: 0.5;
+		}
+	}
+	form {
+		width: 80%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+
+		ul {
+			width: 100%;
+			height: 100%;
+			overflow: scroll;
+			display: flex;
+			flex-direction: column;
+			max-height: 350px;
+			align-items: flex-start;
+			li.questions:not(:last-child) {
+				margin-bottom: 50px;
+			}
+			li {
+				h1 {
+					font-size: 0.9rem;
+					font-weight: bold;
+
+					&::first-letter {
+						text-transform: uppercase;
+					}
+				}
+				ul {
+					li.options {
+						display: flex;
+						flex-direction: row;
+						align-items: center;
+						input {
+							margin-right: 10px;
+						}
+						label {
+							&::first-letter {
+								text-transform: uppercase;
+							}
+						}
+					}
+				}
+				&:last-child {
+					margin-bottom: 10px;
+				}
+			}
+		}
 	}
 }
 </style>
