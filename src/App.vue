@@ -24,6 +24,7 @@
 
 <script lang="ts">
 import Vue from "vue";
+import axios from "@nextcloud/axios";
 import {
 	Content,
 	AppNavigation,
@@ -42,9 +43,6 @@ export default Vue.extend({
 	data: () => ({
 		loading: false,
 	}),
-	created() {
-		console.info(this.$router);
-	},
 	computed: {
 		isRoot() {
 			return this.$route.path === "/";
