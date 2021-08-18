@@ -7,9 +7,9 @@ export interface IVotation {
 	title: string;
 	available: number;
 	description: string;
-	id: number;
+	formId: number;
 	status: string;
-	finished_at: string;
+	finishedAt: string;
 	voted: boolean;
 	responses: IQuestion[];
 }

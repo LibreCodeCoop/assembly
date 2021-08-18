@@ -7,14 +7,14 @@ export enum status {
 	waiting,
 	done,
 	cancelled,
-	in_progress,
+	inProgress,
 }
 
 export interface IMeet {
 	id: number;
 	date: string;
-	created_at: string;
-	created_by: IUserOwner;
+	createdAt: string;
+	createdBy: IUserOwner;
 	description: string;
 	meetUrl: string;
 	status: string;
