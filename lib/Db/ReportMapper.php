@@ -111,7 +111,7 @@ class ReportMapper extends QBMapper
                 ->fetchAll();
     }
 
-    public function getMeetings($userId)
+    public function getMeetings($userId, $meetId = null)
     {
         $qb = $this->db->getQueryBuilder();
 
@@ -130,9 +130,17 @@ class ReportMapper extends QBMapper
             ->join('m', 'assembly_participants', 'p', 'm.meeting_id = p.meeting_id')
             ->join('m', 'users', 'u', 'u.uid = m.created_by')
             ->join('m', 'accounts', 'a', 'a.uid = m.created_by')
-            ->where('u.uid = :userId')
-            ->orderBy('m.meeting_time', 'DESC')
-            ->setParameter('userId', $userId);
+            ->orderBy('m.meeting_time', 'DESC');
+        if ($userId) {
+            $query
+                ->andWhere('u.uid = :userId')
+                ->setParameter('userId', $userId);
+        }
+        if ($meetId) {
+            $query
+                ->andWhere('m.meeting_id = :meetId')
+                ->setParameter('meetId', $meetId);
+        }
         $stmt = $query->execute();
         $return = [];
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
@@ -164,5 +172,45 @@ class ReportMapper extends QBMapper
             $return[] = $row;
         }
         return $return;
+    }
+
+    public function getPools($meetId, $userId)
+    {
+        $groups = $this->getGroupsOfUser($userId);
+
+        $forms = $this->formMapper->findAll();
+
+        $qb = $this->db->getQueryBuilder();
+        $query = $qb->select('f.title')
+            ->selectAlias('f.hash', 'hash')
+            ->selectAlias('f.id', 'formId')
+            ->selectAlias('g.gid', 'groupId')
+            ->from('users', 'u')
+            ->join('u', 'group_user', 'g', 'g.uid = u.uid')
+            ->join('g', 'forms_v2_forms', 'f', "jsonb_exists((f.access_json->'groups')::jsonb, g.gid)")
+            ->where('u.uid = :userId')
+            ->andWhere('expires = 0  or expires > extract(epoch from now())')
+            ->setParameter('userId', $userId);
+        return $query
+            ->execute()
+            ->fetchAll();
+        $qb = $this->db->getQueryBuilder();
+        return;
+    }
+
+    private function getGroupsOfUser($userId): array
+    {
+        $qb = $this->db->getQueryBuilder();
+        $stmt = $qb->selectAlias('g.gid', 'groupId')
+            ->from('users', 'u')
+            ->join('u', 'group_user', 'g', 'g.uid = u.uid')
+            ->where('u.uid = :userId')
+            ->setParameter('userId', $userId)
+            ->execute();
+        $groups = [];
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $groups[] = $row['groupId'];
+        }
+        return $groups;
     }
 }
