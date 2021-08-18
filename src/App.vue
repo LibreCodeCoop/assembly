@@ -42,9 +42,6 @@ export default Vue.extend({
 	data: () => ({
 		loading: false,
 	}),
-	created() {
-		console.info(this.$router);
-	},
 	computed: {
 		isRoot() {
 			return this.$route.path === "/";

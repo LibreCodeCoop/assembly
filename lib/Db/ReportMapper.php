@@ -128,7 +128,7 @@ class ReportMapper extends QBMapper
             ->addSelect('m.status')
             ->from('assembly_meetings', 'm')
             ->join('m', 'assembly_participants', 'p', 'm.meeting_id = p.meeting_id')
-            ->join('m', 'users', 'u', 'u.uid = m.created_by')
+            ->join('p', 'users', 'u', 'u.uid = p.uid')
             ->join('m', 'accounts', 'a', 'a.uid = m.created_by')
             ->orderBy('m.meeting_time', 'DESC');
         if ($userId) {
