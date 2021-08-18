@@ -63,9 +63,9 @@ class ApiController extends BaseApiController
      *
      * @return array
      */
-    public function report($formId, $groupId)
+    public function getReportUsingGroupId($formId, $groupId)
     {
-        $return = $this->ReportService->getReport($formId, $groupId);
+        $return = $this->ReportService->getReportUsingGroupId($formId, $groupId);
         return new DataResponse($return, Http::STATUS_OK);
     }
 
@@ -151,6 +151,18 @@ class ApiController extends BaseApiController
     public function getMeetings()
     {
         $return = $this->ReportService->getMeetings();
+        return new DataResponse($return, Http::STATUS_OK);
+    }
+
+    /**
+     * @NoCSRFRequired
+     * @NoAdminRequired
+     *
+     * @return array
+     */
+    public function getPools($meetId)
+    {
+        $return = $this->ReportService->getPools($meetId);
         return new DataResponse($return, Http::STATUS_OK);
     }
 }
