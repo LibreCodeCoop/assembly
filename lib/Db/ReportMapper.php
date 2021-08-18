@@ -52,9 +52,9 @@ class ReportMapper extends QBMapper
         $qb = $this->db->getQueryBuilder();
         $query = $qb->select('u.displayname')
             ->select('u.uid')
-            ->selectAlias(new Literal('a.data::jsonb -> \'email\' ->> \'value\''), 'email')
-            ->selectAlias(new Literal('to_timestamp(ts.timestamp)'), 'tos_date')
-            ->selectAlias(new Literal('to_timestamp(at.last_activity)'), 'last_activity')
+            ->selectAlias('a.data', 'data')
+            ->selectAlias('ts.timestamp', 'tos_date')
+            ->selectAlias('at.last_activity', 'last_activity')
             ->from('users', 'u')
             ->join('u', 'accounts', 'a', 'a.uid = u.uid')
             ->join('u', 'termsofservice_sigs', 'ts', 'u.uid = ts.user_id')
@@ -74,9 +74,23 @@ class ReportMapper extends QBMapper
             $query->where('gu.gid = :groupId')
                 ->setParameter('groupId', $groupId);
         }
-        return $query
-            ->execute()
-            ->fetchAll();
+        $stmt = $query->execute();
+        $return = [];
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $tos_date = new \DateTime();
+            $tos_date->createFromFormat('U', $row['tos_date']);
+            $row['tos_date'] = $tos_date->format('Y-m-d H:i:s');
+
+            $last_activity = new \DateTime();
+            $last_activity->createFromFormat('U', $row['last_activity']);
+            $row['last_activity'] = $last_activity->format('Y-m-d H:i:s');
+
+            $user = json_decode($row['data']);
+            unset($row['data']);
+            $row['email'] = $user->email->value;
+            $return[] = $row;
+        }
+        return $return;
     }
 
     public function getPoll($userId)
