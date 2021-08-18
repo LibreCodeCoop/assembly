@@ -10,7 +10,7 @@
 return [
 	'routes' => [
 		// API
-		['name' => 'api#report', 'url' => '/api/v1/report/{formId}/{groupId}', 'verb' => 'GET'],
+		['name' => 'api#getReportUsingGroupId', 'url' => '/api/v1/report/{formId}/{groupId}', 'verb' => 'GET'],
 		['name' => 'api#usersAvailable', 'url' => '/api/v1/usersAvailable', 'verb' => 'GET'],
 		['name' => 'api#dashboard', 'url' => '/api/v1/dashboard', 'verb' => 'GET'],
 		['name' => 'api#meetWebhook', 'url' => '/api/v1/meetWebhook', 'verb' => 'POST'],
