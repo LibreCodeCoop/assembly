@@ -1,6 +1,6 @@
 <template>
 	<div class="container">
-		<div class="meet">
+		<div :class="showVotations === true ? 'meet' : 'meet-100'">
 			<button
 				v-show="viewbtn"
 				class="primary"
@@ -14,7 +14,7 @@
 			}}</span>
 			<meet v-if="showMeet" :url="url" />
 		</div>
-		<div class="votations">
+		<div v-show="showVotations" class="votations">
 			<div class="questions">
 				<div v-for="votation in votations" :key="votation.id">
 					<h1>{{ votation.title }}</h1>
@@ -26,8 +26,6 @@
 			<div class="results">
 				<h1>{{ t("assembly", "Results") }}</h1>
 				<div v-show="!voted">
-					<!-- //Votacao nao votou -->
-					<!-- Resultado votado -->
 					{{ votation }}
 				</div>
 				<div v-show="voted">
@@ -38,19 +36,30 @@
 				</div>
 			</div>
 		</div>
+		<button
+			:class="
+				showVotations === true
+					? 'icon-triangle-s icons-show btn-position-true'
+					: 'icon-triangle-n icons-show btn-position-false'
+			"
+			@click="toggleVotationsSide"
+		></button>
 	</div>
 </template>
 <script lang="ts">
 import Vue from "vue";
+import axios from "@nextcloud/axios";
 import store from "@/store";
 import Meet from "@/components/Meet/Meet.vue";
 import { AddVotation, AddVotations } from "@/store/modules/votations/types";
+import { generateUrl } from "@nextcloud/router";
 export default Vue.extend({
 	components: { Meet },
 	data: () => ({
 		showMeet: false,
 		viewbtn: true,
 		showVoted: false,
+		showVotations: false,
 	}),
 	computed: {
 		url() {
@@ -76,8 +85,20 @@ export default Vue.extend({
 	},
 	created() {
 		this.fetchMockVotations();
+		this.getData();
 	},
 	methods: {
+		async getData() {
+			const response2 = await axios.get(
+				generateUrl("apps/forms/api/v1.1/form/1")
+			);
+			console.info("forms2: ", response2);
+		},
+
+		toggleVotationsSide() {
+			this.showVotations = !this.showVotations;
+		},
+
 		async fetchMockVotations() {
 			const votations = [
 				{
@@ -142,6 +163,13 @@ export default Vue.extend({
 		width: 100%;
 		height: 50%;
 	}
+	.meet-100 {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 100%;
+		height: 100%;
+	}
 
 	.votations {
 		display: flex;
@@ -162,7 +190,6 @@ export default Vue.extend({
 				margin: 10px;
 				border: 1px solid #cecece;
 				border-radius: 5px;
-
 				h1 {
 					padding: 10px;
 				}
@@ -178,6 +205,23 @@ export default Vue.extend({
 				font-weight: bold;
 			}
 		}
+	}
+
+	.icons-show {
+		position: absolute;
+		bottom: 5px;
+		left: 5px;
+		min-width: 44px;
+		height: 44px;
+		border-radius: 22px;
+		background-size: 39px;
+		background-color: #cecece;
+	}
+	.btn-position-true {
+		bottom: 5px;
+	}
+	.btn-position-true {
+		bottom: 50.2%;
 	}
 }
 </style>
