@@ -3,13 +3,13 @@ import axios from "@nextcloud/axios";
 import { RootState } from "@/store";
 import { generateUrl } from "@nextcloud/router";
 import { IVotation } from "@/entities/Votations";
-import { AddVotations, ToggleModal } from "../votations/types";
+import { AddVotation, AddVotations, ToggleModal } from "../votations/types";
 import { VotationsState } from "./state";
 
 export const actions = {
 	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 	async getPools(
-		{ commit, dispatch }: ActionContext<VotationsState, RootState>,
+		{ commit, dispatch, state }: ActionContext<VotationsState, RootState>,
 		meetingId: string
 	) {
 		const response = await axios.get(
@@ -19,7 +19,14 @@ export const actions = {
 		pool.some((elem) => {
 			if (elem.status === "enabled" && elem.voted === false) {
 				dispatch("getForms", elem.formId);
+				commit(new AddVotation(elem));
 				commit(new ToggleModal(true));
+			}
+
+			if (elem.status === "disabled" || elem.voted === true) {
+				if (state.votation.formId === elem.formId) {
+					commit(new ToggleModal(false));
+				}
 			}
 		});
 		commit(new AddVotations(pool));
