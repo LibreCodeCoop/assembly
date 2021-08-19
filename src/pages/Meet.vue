@@ -219,10 +219,20 @@ export default Vue.extend({
 		height: 50%;
 		border-top: 1px solid #cecece;
 
+		@media screen and (max-width: 650px) {
+			flex-direction: column;
+		}
+
 		.questions {
 			width: 30%;
 			height: 100%;
 			border-right: 1px solid #cecece;
+			overflow: scroll;
+			max-height: 500px;
+			@media screen and (max-width: 650px) {
+				width: 100%;
+				max-height: 250px;
+			}
 
 			div {
 				display: flex;
@@ -234,6 +244,9 @@ export default Vue.extend({
 				border-radius: 5px;
 				h1 {
 					padding: 10px;
+					max-height: 80px;
+					overflow: hidden;
+					text-overflow: ellipsis;
 				}
 			}
 		}
@@ -243,15 +256,22 @@ export default Vue.extend({
 			height: 100%;
 			padding: 20px;
 			overflow: scroll;
+			@media (max-width: 650px) {
+				width: 100%;
+				max-height: 150px;
+			}
 
 			h1 {
 				font-weight: bold;
-				font-size: 1, 2rem;
+				font-size: 1.2rem;
 			}
 
 			.question {
 				max-height: 300px;
 				overflow: scroll;
+				@media (max-width: 650px) {
+					width: 100%;
+				}
 
 				.question-votation {
 					margin: 20px;
@@ -260,7 +280,11 @@ export default Vue.extend({
 					.question-text {
 						font-weight: bold;
 						font-size: 1rem;
+						max-height: 50px;
+						overflow: hidden;
+						text-overflow: ellipsis;
 					}
+
 					ul {
 						display: flex;
 						flex-direction: row;
@@ -273,11 +297,17 @@ export default Vue.extend({
 							align-items: center;
 							flex-direction: column;
 							min-width: 150px;
+							max-width: 150px;
 							max-height: 100px;
 							border: 1px solid #cecece;
 							padding: 10px;
 							overflow-x: scroll;
 							margin: 10px;
+							p {
+								height: 70%;
+								overflow: hidden;
+								text-overflow: ellipsi;
+							}
 						}
 					}
 				}
@@ -295,7 +325,7 @@ export default Vue.extend({
 		background-size: 39px;
 		background-color: #cecece;
 	}
-	.btn-position-true {
+	.btn-position-false {
 		bottom: 5px;
 	}
 	.btn-position-true {
