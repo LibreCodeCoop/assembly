@@ -1,6 +1,6 @@
 import { MutationTree } from "vuex";
 import { VotationsState } from "./state";
-import { AddVotation, AddVotations, Types } from "./types";
+import { AddVotation, AddVotations, ToggleModal, Types } from "./types";
 
 export const mutations: MutationTree<VotationsState> = {
 	[Types.ADD_VOTATION]: (state, action: AddVotation) => {
@@ -16,5 +16,12 @@ export const mutations: MutationTree<VotationsState> = {
 	},
 	[Types.GET_VOTATIONS]: (state) => {
 		return state.votations;
+	},
+	[Types.TOGGLE_MODAL]: (state, action: ToggleModal) => {
+		const votations = action.payload;
+		state.isEnabledModal = votations;
+	},
+	[Types.GET_MODAL]: (state) => {
+		return state.isEnabledModal;
 	},
 };
