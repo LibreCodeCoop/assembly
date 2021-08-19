@@ -1,0 +1,73 @@
+{
+	"name": "assembly",
+	"description": "A app for assembly.",
+	"version": "1.0.0",
+	"repository": "git@github.com:LyseonTech/assembly.git",
+	"license": "agpl",
+	"scripts": {
+		"serve": "vue-cli-service serve --name assembly --inline-vue",
+		"build": "vue-cli-service build --name assembly --inline-vue",
+		"build:watch": "vue-cli-service build --name assembly --inline-vue --watch",
+		"test:unit": "vue-cli-service test:unit",
+		"test:e2e": "vue-cli-service test:e2e",
+		"lint": "vue-cli-service lint"
+	},
+	"dependencies": {
+		"@mycure/vue-jitsi-meet": "^0.0.7",
+		"@nextcloud/axios": "^1.6.0",
+		"@nextcloud/dialogs": "^3.1.2",
+		"@nextcloud/initial-state": "^1.2.0",
+		"@nextcloud/l10n": "^1.4.1",
+		"@nextcloud/logger": "^2.0.0",
+		"@nextcloud/router": "^2.0.0",
+		"@nextcloud/vue": "^4.0.3",
+		"@nextcloud/webpack-vue-config": "^4.1.0",
+		"core-js": "^3.6.5",
+		"date-fns": "^2.23.0",
+		"register-service-worker": "^1.7.1",
+		"vue": "^2.6.11",
+		"vue-class-component": "^7.2.3",
+		"vue-property-decorator": "^9.1.2",
+		"vue-router": "^3.2.0",
+		"vuex": "^3.4.0"
+	},
+	"browserslist": [
+		"> 1%",
+		"last 2 versions",
+		"not ie <= 8"
+	],
+	"engines": {
+		"node": ">=10.0.0"
+	},
+	"devDependencies": {
+		"@nextcloud/browserslist-config": "^2.1.0",
+		"@nextcloud/eslint-config": "^6.0.0",
+		"@nextcloud/eslint-plugin": "^2.0.0",
+		"@types/date-fns": "^2.6.0",
+		"@types/jest": "^24.0.19",
+		"@types/terser-webpack-plugin": "^5.0.4",
+		"@typescript-eslint/eslint-plugin": "^4.18.0",
+		"@typescript-eslint/parser": "^4.18.0",
+		"@vue/cli-plugin-babel": "~4.5.0",
+		"@vue/cli-plugin-e2e-cypress": "~4.5.0",
+		"@vue/cli-plugin-eslint": "~4.5.0",
+		"@vue/cli-plugin-pwa": "~4.5.0",
+		"@vue/cli-plugin-router": "~4.5.0",
+		"@vue/cli-plugin-typescript": "~4.5.0",
+		"@vue/cli-plugin-unit-jest": "~4.5.0",
+		"@vue/cli-plugin-vuex": "~4.5.0",
+		"@vue/cli-service": "~4.5.0",
+		"@vue/eslint-config-prettier": "^6.0.0",
+		"@vue/eslint-config-typescript": "^7.0.0",
+		"@vue/test-utils": "^1.0.3",
+		"eslint": "^6.7.2",
+		"eslint-plugin-prettier": "^3.3.1",
+		"eslint-plugin-vue": "^6.2.2",
+		"node-sass": "^4.12.0",
+		"prettier": "^2.2.1",
+		"sass-loader": "^8.0.2",
+		"terser-webpack-plugin": "^4.2.3",
+		"typescript": "~4.1.5",
+		"vue-template-compiler": "^2.6.11"
+	}
+}

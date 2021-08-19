@@ -77,12 +77,10 @@ class ReportMapper extends QBMapper
         $stmt = $query->execute();
         $return = [];
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $tos_date = new \DateTime();
-            $tos_date->createFromFormat('U', $row['tos_date']);
+            $tos_date = \DateTime::createFromFormat('U', $row['tos_date']);
             $row['tos_date'] = $tos_date->format('Y-m-d H:i:s');
 
-            $last_activity = new \DateTime();
-            $last_activity->createFromFormat('U', $row['last_activity']);
+            $last_activity = \DateTime::createFromFormat('U', $row['last_activity']);
             $row['last_activity'] = $last_activity->format('Y-m-d H:i:s');
 
             $user = json_decode($row['data']);
@@ -128,7 +126,7 @@ class ReportMapper extends QBMapper
             ->addSelect('m.status')
             ->from('assembly_meetings', 'm')
             ->join('m', 'assembly_participants', 'p', 'm.meeting_id = p.meeting_id')
-            ->join('m', 'users', 'u', 'u.uid = m.created_by')
+            ->join('p', 'users', 'u', 'u.uid = p.uid')
             ->join('m', 'accounts', 'a', 'a.uid = m.created_by')
             ->orderBy('m.meeting_time', 'DESC');
         if ($userId) {
@@ -145,21 +143,18 @@ class ReportMapper extends QBMapper
         $return = [];
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             if (!empty($row['date'])) {
-                $date = new \DateTime();
-                $date->createFromFormat('U', $row['date']);
+                $date = \DateTime::createFromFormat('U', $row['date']);
                 $row['date'] = $date->format('Y-m-d H:i');
             }
 
             $row['deletedAt'] = $row['deleted_at'];
             if (!empty($row['deletedAt'])) {
-                $date = new \DateTime();
-                $date->createFromFormat('U', $row['deletedAt']);
+                $date = \DateTime::createFromFormat('U', $row['deletedAt']);
                 $row['deletedAt'] = $date->format('Y-m-d H:i');
             }
             unset($row['deleted_at']);
 
-            $created_at = new \DateTime();
-            $created_at->createFromFormat('U', $row['created_at']);
+            $created_at = \DateTime::createFromFormat('U', $row['created_at']);
             $row['createdAt'] = $created_at->format('Y-m-d H:i');
             unset($row['created_at']);
 
@@ -224,5 +219,150 @@ class ReportMapper extends QBMapper
             $groups[] = $row['groupId'];
         }
         return $groups;
+    }
+
+    public function getTos($groupId)
+    {
+        $qb = $this->db->getQueryBuilder();
+        $query = $qb
+            ->addSelect('a.data')
+            ->selectAlias('ts.timestamp', 'tos_date')
+            ->from('users', 'u')
+            ->join('u', 'accounts', 'a', 'a.uid = u.uid')
+            ->leftJoin('u', 'termsofservice_sigs', 'ts', 'u.uid = ts.user_id')
+            ->join('u', 'group_user', 'gu', 'gu.uid = u.uid')
+            ->where('gu.gid = :groupId')
+            ->setParameter('groupId', $groupId)
+            ->orderBy('tos_date');
+
+        $stmt = $query->execute();
+        $return = [];
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $user = json_decode($row['data']);
+            $row['email'] = $user->email->value;
+            unset($row['data']);
+
+            $tos_date = \DateTime::createFromFormat('U', $row['tos_date']);
+            $row['tosDate'] = $tos_date->format('Y-m-d H:i:s');
+            unset($row['tos_date']);
+
+            $return[] = $row;
+        }
+        return $return;
+    }
+
+    public function getVotes($meetId)
+    {
+        $qb = $this->db->getQueryBuilder();
+        $query = $qb
+            ->selectAlias('forms.title', 'question')
+            ->selectAlias('submissions.timestamp', 'date')
+            ->selectAlias('submissions.user_id', 'user')
+            ->from('forms_v2_answers', 'answers')
+            ->join('answers', 'forms_v2_questions', 'questions', 'questions.id = answers.question_id')
+            ->join('answers', 'forms_v2_submissions', 'submissions', 'submissions.id = answers.submission_id')
+            ->join('questions', 'forms_v2_forms', 'forms', 'forms.id = questions.form_id')
+            ->join('submissions', 'group_user', 'gu', 'gu.uid = submissions.user_id')
+            ->join('forms', 'assembly_meeting_pools', 'mp', 'forms.id = mp.form_id')
+            ->join('mp', 'assembly_meetings', 'm', 'm.meeting_id = mp.meeting_id')
+            ->where('m.meeting_id = :meetId')
+            ->setParameter('meetId', $meetId)
+            ->groupBY(['forms.title', 'submissions.timestamp', 'submissions.user_id'])
+            ->addOrderBy('date')
+            ->addOrderBy('question');
+        $stmt = $query->execute();
+        $return = [];
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $date = \DateTime::createFromFormat('U', $row['date']);
+            $row['date'] = $date->format('Y-m-d H:i:s');
+
+            $return[] = $row;
+        }
+        return $return;
+    }
+
+    public function getAttendances($meetId)
+    {
+        $qb = $this->db->getQueryBuilder();
+        $query = $qb
+            ->addSelect('a.data')
+            ->addSelect('u.displayname')
+            ->from('users', 'u')
+            ->join('u', 'accounts', 'a', 'u.uid = a.uid')
+            ->join('u', 'authtoken', 'at', 'u.uid = at.uid')
+            ->join('u', 'group_user', 'gu', 'u.uid = gu.uid')
+            ->join('u', 'assembly_participants', 'p', 'u.uid = p.uid')
+            ->join('p', 'assembly_meetings', 'm', 'm.meeting_id = p.meeting_id')
+            ->where('m.slug = :meetId')
+            ->setParameter('meetId', $meetId)
+            ->groupBy(['a.data', 'u.displayname'])
+            ->addOrderBy('u.displayname');
+
+        $stmt = $query->execute();
+        $return = [];
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $user = json_decode($row['data']);
+            $row['email'] = $user->email->value;
+            unset($row['data']);
+
+            $return[] = $row;
+        }
+        return $return;
+    }
+
+    public function getTotalVotes($meetId)
+    {
+        $qb = $this->db->getQueryBuilder();
+
+        $query = $qb->resetQueryParts()
+            ->addSelect('f.title')
+            ->selectAlias('q.text', 'question')
+            ->selectAlias('a.text', 'response')
+            ->selectAlias($qb->func()->count('*'), 'total')
+            ->selectAlias('q.id', 'question_id')
+            ->selectAlias('f.id', 'form_id')
+            ->from('forms_v2_forms', 'f')
+            ->join('f', 'forms_v2_questions', 'q', 'f.id = q.form_id')
+            ->join('f', 'forms_v2_submissions', 's', 's.form_id = f.id')
+            ->join('s', 'group_user', 'gu', 'gu.uid = s.user_id')
+            ->leftJoin('s', 'forms_v2_answers', 'a', 'a.submission_id = s.id AND a.question_id = q.id')
+            ->join('gu', 'assembly_participants', 'ap', 'ap.uid = gu.uid')
+            ->where('ap.meeting_id = :meetId')
+            ->setParameter('meetId', $meetId)
+            ->groupBy(['q.text', 'a.text', 'f.id', 'q.id']);
+        $stmt = $query->execute();
+        $report = [];
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            if (empty($row['response'])) {
+                $row['total'] = 0;
+            }
+            $report[$row['form_id']][$row['question_id']] = $row;
+        }
+
+        $query = $qb->resetQueryParts()
+            ->selectAlias($qb->func()->min('s.timestamp'), 'start')
+            ->selectAlias($qb->func()->max('s.timestamp'), 'stop')
+            ->addSelect('s.form_id')
+            ->selectAlias('q.id', 'question_id')
+            ->from('forms_v2_submissions', 's')
+            ->join('s', 'forms_v2_questions', 'q', 's.form_id = q.form_id')
+            ->join('s', 'assembly_participants', 'ap', 'ap.uid = s.user_id')
+            ->where('ap.meeting_id = :meetId')
+            ->setParameter('meetId', $meetId)
+            ->groupBy(['s.form_id', 'q.id'])
+            ->orderBy('start');
+        $stmt = $query->execute();
+        $return = [];
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $row = array_merge($row, $report[$row['form_id']][$row['question_id']]);
+            unset($row['form_id'], $row['question_id']);
+            $row['start'] = \DateTime::createFromFormat('U', $row['start'])
+                ->format('Y-m-d H:i:s');
+            $row['stop'] = \DateTime::createFromFormat('U', $row['stop'])
+                ->format('Y-m-d H:i:s');
+            $return[] = $row;
+        }
+
+        return $return;
     }
 }

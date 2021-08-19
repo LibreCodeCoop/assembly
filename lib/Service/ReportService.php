@@ -169,29 +169,6 @@ class ReportService
             '?jwt=' . $token->toString();
     }
 
-    public function getReportUsingGroupId($formId, $groupId)
-    {
-        $data = $this->ReportMapper->getResult($this->userSession->getUser()->getUID(), $formId);
-        $available = $this->ReportMapper->usersAvailable($groupId);
-        $responses = [];
-        $metadata['total'] = 0;
-        $metadata['available'] = count($available);
-        foreach ($data as $row) {
-            $responses[] = [
-                'text' => $row['response'],
-                'total' => $row['total']
-            ];
-            $metadata['total']+=$row['total'];
-        }
-        if($data){
-            $metadata['title'] = $data[0]['title'];
-        }
-        return [
-            'responses' => $responses,
-            'metadata' => $metadata
-        ];
-    }
-
     public function getMeetings()
     {
         $user = $this->userSession->getUser();
@@ -221,7 +198,7 @@ class ReportService
         $meeting = $meeting[0];
 
         $return = [];
-        foreach ($forms as $key => $form) {
+        foreach ($forms as $form) {
             $access = $form->getAccess();
             $inGroup = false;
             foreach ($access['groups'] as $group) {
@@ -243,8 +220,7 @@ class ReportService
             ];
 
             if ($form->getExpires() > 0) {
-                $date = new \DateTime();
-                $date->createFromFormat('U', $form->getExpires());
+                $date = \DateTime::createFromFormat('U', $form->getExpires());
                 $data['finishedAt'] = $date->format('Y-m-d H:i:s');
                 $data['status'] = 'disabled';
             }
@@ -289,4 +265,31 @@ class ReportService
         return $return;
     }
 
+    public function getTos($groupId)
+    {
+        $user = $this->userSession->getUser();
+        $groups = $this->groupManager->getUserGroupIds($user);
+        if (!in_array($groupId, $groups)) {
+            throw new \InvalidArgumentException('Invalid group');
+        }
+        return $this->ReportMapper->getTos($groupId);
+    }
+
+    public function getVotes($meetId)
+    {
+        $votes = $this->ReportMapper->getVotes($meetId);
+        return $votes;
+    }
+
+    public function getAttendances($meetId)
+    {
+        $attendances = $this->ReportMapper->getAttendances($meetId);
+        return $attendances;
+    }
+
+    public function getTotalVotes($meetId)
+    {
+        $totalVotes = $this->ReportMapper->getTotalVotes($meetId);
+        return $totalVotes;
+    }
 }

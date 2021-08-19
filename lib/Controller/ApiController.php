@@ -63,18 +63,6 @@ class ApiController extends BaseApiController
      *
      * @return array
      */
-    public function getReportUsingGroupId($formId, $groupId)
-    {
-        $return = $this->ReportService->getReportUsingGroupId($formId, $groupId);
-        return new DataResponse($return, Http::STATUS_OK);
-    }
-
-    /**
-     * @NoCSRFRequired
-     * @NoAdminRequired
-     *
-     * @return array
-     */
     public function usersAvailable($groupId)
     {
         return $this->ReportMapper->usersAvailable($groupId);
@@ -163,6 +151,54 @@ class ApiController extends BaseApiController
     public function getPools($meetId)
     {
         $return = $this->ReportService->getPools($meetId);
+        return new DataResponse($return, Http::STATUS_OK);
+    }
+
+    /**
+     * @NoCSRFRequired
+     * @SubAdminRequired
+     *
+     * @return array
+     */
+    public function getTos($groupId)
+    {
+        $return = $this->ReportService->getTos($groupId);
+        return new DataResponse($return, Http::STATUS_OK);
+    }
+
+    /**
+     * @NoCSRFRequired
+     * @SubAdminRequired
+     *
+     * @return array
+     */
+    public function getVotes($meetId)
+    {
+        $return = $this->ReportService->getVotes($meetId);
+        return new DataResponse($return, Http::STATUS_OK);
+    }
+
+    /**
+     * @NoCSRFRequired
+     * @SubAdminRequired
+     *
+     * @return array
+     */
+    public function getAttendances($meetId)
+    {
+        $return = $this->ReportService->getAttendances($meetId);
+        return new DataResponse($return, Http::STATUS_OK);
+    }
+
+    /**
+     * @NoCSRFRequired
+     * @SubAdminRequired
+     *
+     * @return array
+     */
+    public function getTotalVotes($meetId)
+    {
+        $return = $this->ReportService->getTotalVotes($meetId);
         return new DataResponse($return, Http::STATUS_OK);
     }
 }
