@@ -62,18 +62,18 @@ class Version1000Date20210816222141 extends SimpleMigrationStep {
 		$meetings = $schema->getTable('assembly_meetings');
 
 		$meetings->addColumn('created_by', Types::STRING, [
-			'notnull' => true,
+			'notnull' => false,
 			'length' => 64,
 		]);
 		$meetings->addColumn('slug', Types::STRING, [
-			'notnull' => true,
+			'notnull' => false,
 			'length' => 64,
 		]);
 		$meetings->addColumn('description', Types::TEXT, [
 			'notnull' => false,
 		]);
 		$meetings->addColumn('deleted_at', Types::INTEGER, [
-			'notnull' => true,
+			'notnull' => false,
 			'length' => 4,
 			'default' => 0,
 		]);
