@@ -52,8 +52,8 @@ class PageController extends Controller {
 		$policy = new ContentSecurityPolicy();
 		if ($this->appConfig->getAppValue('enable_jitsi_jwt')) {
 			$policy->addAllowedFrameDomain(parse_url($this->appConfig->getAppValue('jitsi_url'))['host']);
+			$policy->setAllowedScriptDomains([parse_url($this->appConfig->getAppValue('jitsi_url'))['host']]);
 		}
-		$policy->setAllowedScriptDomains(['meet.jit.si']);
 		$policy->allowEvalScript();
 		$response->setContentSecurityPolicy($policy);
 
