@@ -51,6 +51,7 @@
 					? 'icon-triangle-s icons-show btn-position-true'
 					: 'icon-triangle-n icons-show btn-position-false'
 			"
+			v-show="haveVotations"
 			@click="toggleVotationsSide"
 		></button>
 		<Modal
@@ -117,6 +118,9 @@ export default Vue.extend({
 		modal: false,
 	}),
 	computed: {
+		haveVotations() {
+			return store.state.votations.votations.length > 0 ? true : false;
+		},
 		url() {
 			return store.state.meet.meet.url;
 		},
