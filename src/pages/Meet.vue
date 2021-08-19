@@ -18,20 +18,29 @@
 			<div class="questions">
 				<div v-for="votation in votations" :key="votation.id">
 					<h1>{{ votation.title }}</h1>
-					<button @click="selectVotation(votation.id)">
+					<button @click="selectVotation(votation.formId)">
 						{{ t("assembly", "View") }}
 					</button>
 				</div>
 			</div>
 			<div class="results">
 				<h1>{{ t("assembly", "Results") }}</h1>
-				<div v-show="!voted">
-					{{ votation }}
-				</div>
-				<div v-show="voted">
-					<li v-for="vote in votation.responses" :key="vote.text">
-						<p>{{ vote.text }}</p>
-						<span>{{ vote.total }}</span>
+				<div class="question">
+					<li
+						v-for="(question, index) in votation.questions"
+						:key="index"
+						class="question-votation"
+					>
+						<p class="question-text">{{ question.text }}</p>
+						<ul>
+							<li
+								v-for="(option, index) in question.options"
+								:key="index"
+							>
+								<p>{{ option.text }}</p>
+								<span>{{ option.total }}</span>
+							</li>
+						</ul>
 					</li>
 				</div>
 			</div>
@@ -58,8 +67,8 @@
 					<ul>
 						<li
 							class="questions"
-							v-for="question in form.questions"
-							:key="question.id"
+							v-for="(question, index) in form.questions"
+							:key="index"
 						>
 							<h1>{{ question.text }}</h1>
 							<ul>
@@ -73,7 +82,7 @@
 										type="radio"
 										:name="question.id"
 										v-model="answers[question.id]"
-										:value="option.id"
+										:value="[option.id]"
 									/>
 									<label :for="option.id">{{
 										option.text
@@ -127,17 +136,6 @@ export default Vue.extend({
 				return newValue;
 			},
 		},
-		voted() {
-			if (this.showVoted) {
-				if (this.votation !== null) {
-					if (this.votation.voted) {
-						return this.votation.voted;
-					}
-					return false;
-				}
-			}
-			return false;
-		},
 		votations() {
 			return store.state.votations.votations;
 		},
@@ -175,7 +173,7 @@ export default Vue.extend({
 
 		selectVotation(id) {
 			this.votations.forEach(async (element) => {
-				if (element.id === id) {
+				if (element.formId === id) {
 					await store.commit(new AddVotation(element));
 				}
 			});
@@ -191,8 +189,8 @@ export default Vue.extend({
 </script>
 <style lang="scss">
 .modal-container {
-	width: 50% !important;
-	min-height: 50% !important;
+	width: 100% !important;
+	min-height: 100% !important;
 }
 .container-meet {
 	display: flex;
@@ -244,9 +242,45 @@ export default Vue.extend({
 			width: 70%;
 			height: 100%;
 			padding: 20px;
+			overflow: scroll;
 
 			h1 {
 				font-weight: bold;
+				font-size: 1, 2rem;
+			}
+
+			.question {
+				max-height: 300px;
+				overflow: scroll;
+
+				.question-votation {
+					margin: 20px;
+					list-style: none;
+
+					.question-text {
+						font-weight: bold;
+						font-size: 1rem;
+					}
+					ul {
+						display: flex;
+						flex-direction: row;
+						flex-wrap: wrap;
+						width: 100%;
+						height: 100%;
+
+						li {
+							display: flex;
+							align-items: center;
+							flex-direction: column;
+							min-width: 150px;
+							max-height: 100px;
+							border: 1px solid #cecece;
+							padding: 10px;
+							overflow-x: scroll;
+							margin: 10px;
+						}
+					}
+				}
 			}
 		}
 	}
@@ -329,7 +363,8 @@ export default Vue.extend({
 					li.options {
 						display: flex;
 						flex-direction: row;
-						align-items: center;
+						align-items: flex-start;
+						margin: 10px;
 						input {
 							margin-right: 10px;
 						}
