@@ -54,6 +54,7 @@ export default Vue.extend({
 						"desktop",
 						"etherpad",
 						"fullscreen",
+						"hangup",
 						"help",
 						"microphone",
 						"select-background",
