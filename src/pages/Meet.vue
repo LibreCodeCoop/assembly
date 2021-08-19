@@ -44,7 +44,11 @@
 			"
 			@click="toggleVotationsSide"
 		></button>
-		<Modal v-show="showForm" :title="t('assembly', 'Votações')" v-if="form">
+		<Modal
+			v-show="showModal"
+			:title="t('assembly', 'Votações')"
+			v-if="form"
+		>
 			<div class="container-modal">
 				<header>
 					<h1>{{ form.title }}</h1>
@@ -90,10 +94,8 @@ import store from "@/store";
 import axios from "@nextcloud/axios";
 import { Modal } from "@nextcloud/vue";
 import Meet from "@/components/Meet/Meet.vue";
-import { AddVotation, AddVotations } from "@/store/modules/votations/types";
-import { generateOcsUrl, generateUrl } from "@nextcloud/router";
-import { AddForm } from "@/store/modules/form/types";
-import { IVotation } from "@/entities/Votations";
+import { AddVotation, ToggleModal } from "@/store/modules/votations/types";
+import { generateOcsUrl } from "@nextcloud/router";
 export default Vue.extend({
 	components: { Meet, Modal },
 	data: () => ({
@@ -103,18 +105,27 @@ export default Vue.extend({
 		showVotations: false,
 		questionSelectedOption: null,
 		answers: {},
+		modal: false,
 	}),
 	computed: {
 		url() {
-			return store.state.meet.meet.meetUrl;
+			return store.state.meet.meet.url;
 		},
 		form() {
 			return store.state.form.form;
 		},
-		showForm() {
-			return store.state.votations.votations.some(
-				(elem) => elem.status === "enabled"
-			);
+		showModal() {
+			return store.state.votations.isEnabledModal;
+		},
+		showForm: {
+			get: () => {
+				return store.state.votations.votations.some(
+					(elem) => elem.status === "enabled" && elem.voted === false
+				);
+			},
+			set: (newValue) => {
+				return newValue;
+			},
 		},
 		voted() {
 			if (this.showVoted) {
@@ -135,7 +146,11 @@ export default Vue.extend({
 		},
 	},
 	created() {
-		this.fetchMockVotations();
+		store.dispatch("getPools", store.state.meet.meet.meetingId);
+
+		setInterval(() => {
+			store.dispatch("getPools", store.state.meet.meet.meetingId);
+		}, 15000);
 	},
 	methods: {
 		toggleVotationsSide() {
@@ -146,80 +161,16 @@ export default Vue.extend({
 			this.loading = true;
 			try {
 				await axios.post(
-					generateOcsUrl("apps/forms/api/v1.1/submission/insert"),
+					generateOcsUrl("/apps/forms/api/v1/submission/insert"),
 					{
 						formId: this.form.id,
 						answers: this.answers,
 					}
 				);
-				this.closeModal();
-				// this.getData();
+				await store.commit(new ToggleModal(false));
 			} catch (error) {
 				console.error(error);
 			}
-		},
-
-		async getForm(id) {
-			const response = await axios.get(
-				generateOcsUrl(`/apps/forms/api/v1/form/${id}`)
-			);
-			await store.commit(new AddForm(response.data.ocs.data));
-		},
-
-		async getData() {
-			const response = await axios.get(
-				generateUrl("/apps/assembly/api/v1/pools")
-			);
-			const pools: IVotation[] = response.data.pools;
-			pools.some((elem) => {
-				if (elem.status === "enabled") {
-					this.getForm(elem.formId);
-				}
-			});
-			await store.commit(new AddVotations(pools));
-		},
-
-		async fetchMockVotations() {
-			const votations = [
-				{
-					title: "Algum Title",
-					available: 19,
-					description: "Form Desc",
-					formId: 5,
-					status: "enabled",
-					finishedAt: "2021-03-03 11:30:20",
-					voted: true,
-					responses: [
-						{
-							text: "Response text",
-							total: 19,
-						},
-					],
-				},
-				{
-					title: "Algum Title2",
-					available: 19,
-					description: "Form Desc",
-					formId: 4,
-					status: "disabled",
-					finishedAt: "2021-03-03 11:30:20",
-					voted: false,
-					responses: [
-						{
-							text: "Response TT",
-							total: 39,
-						},
-					],
-				},
-			];
-
-			votations.some((elem) => {
-				if (elem.status === "enabled") {
-					this.getForm(elem.formId);
-				}
-			});
-
-			await store.commit(new AddVotations(votations));
 		},
 
 		selectVotation(id) {
@@ -352,6 +303,7 @@ export default Vue.extend({
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
+		margin-top: 20px;
 
 		ul {
 			width: 100%;
@@ -391,6 +343,13 @@ export default Vue.extend({
 				&:last-child {
 					margin-bottom: 10px;
 				}
+			}
+		}
+		button {
+			width: auto;
+			&[type="submit"] {
+				max-width: 250px;
+				margin-bottom: 50px;
 			}
 		}
 	}
