@@ -1,12 +1,14 @@
 <?php
 namespace OCA\Assembly\Controller;
 
+use OC\Security\CSP\ContentSecurityPolicy;
 use OCA\Assembly\AppInfo\Application;
 use OCA\Assembly\Db\ReportMapper;
 use OCA\Assembly\Service\ReportService;
 use OCP\IRequest;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\IDBConnection;
 use OCP\IUserSession;
 use OCP\Util;
@@ -18,15 +20,19 @@ class PageController extends Controller {
 	protected $ReportService;
 	/** @var IUserSession */
 	private $userSession;
+	/** @var IAppConfig */
+	private $appConfig;
 
 	public function __construct(string $AppName,
 								IRequest $request,
 								IUserSession $userSession,
+								IAppConfig $appConfig,
 								ReportMapper $ReportMapper,
 								ReportService $ReportService,
 								IDBConnection $db) {
 		parent::__construct($AppName, $request);
 		$this->userSession = $userSession;
+		$this->appConfig = $appConfig;
 		$this->ReportMapper =  $ReportMapper;
 		$this->ReportService = $ReportService;
 		$this->db = $db;
@@ -42,6 +48,14 @@ class PageController extends Controller {
 		Util::addScript(Application::APP_ID, 'assembly-app');
 
 		$response = new TemplateResponse(Application::APP_ID, 'main');
+
+		$policy = new ContentSecurityPolicy();
+		if ($this->appConfig->getAppValue('enable_jitsi_jwt')) {
+			$policy->addAllowedFrameDomain(parse_url($this->appConfig->getAppValue('jitsi_url'))['host']);
+		}
+		$policy->setAllowedScriptDomains(['meet.jit.si']);
+		$policy->allowEvalScript();
+		$response->setContentSecurityPolicy($policy);
 
 		return $response;
 	}
