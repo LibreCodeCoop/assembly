@@ -198,7 +198,7 @@ class ReportService
         $meeting = $meeting[0];
 
         $return = [];
-        foreach ($forms as $key => $form) {
+        foreach ($forms as $form) {
             $access = $form->getAccess();
             $inGroup = false;
             foreach ($access['groups'] as $group) {
@@ -285,5 +285,11 @@ class ReportService
     {
         $attendances = $this->ReportMapper->getAttendances($meetId);
         return $attendances;
+    }
+
+    public function getTotalVotes($meetId)
+    {
+        $totalVotes = $this->ReportMapper->getTotalVotes($meetId);
+        return $totalVotes;
     }
 }

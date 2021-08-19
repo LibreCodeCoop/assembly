@@ -189,4 +189,16 @@ class ApiController extends BaseApiController
         $return = $this->ReportService->getAttendances($meetId);
         return new DataResponse($return, Http::STATUS_OK);
     }
+
+    /**
+     * @NoCSRFRequired
+     * @SubAdminRequired
+     *
+     * @return array
+     */
+    public function getTotalVotes($meetId)
+    {
+        $return = $this->ReportService->getTotalVotes($meetId);
+        return new DataResponse($return, Http::STATUS_OK);
+    }
 }
