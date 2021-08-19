@@ -22,12 +22,11 @@
 										<span>
 											{{
 												t("assembly", "By {name}", {
-													name: meet.created_by
-														.display_name
-														? meet.created_by
-																.display_name
-														: meet.created_by
-																.user_id,
+													name: meet.createdBy
+														.displayName
+														? meet.createdBy
+																.displayName
+														: meet.createdBy.userId,
 												})
 											}}
 										</span>
@@ -52,6 +51,7 @@
 								<td>
 									<button
 										class="primary"
+										:disabled="!hableButton(meet)"
 										@click="redirect(meet)"
 									>
 										Acessar
@@ -75,10 +75,8 @@ import Vue from "vue";
 import { format } from "date-fns";
 import { EmptyContent } from "@nextcloud/vue";
 import { ptBR } from "date-fns/locale";
-import axios from "@nextcloud/axios";
-import { generateUrl } from "@nextcloud/router";
 import store from "@/store";
-import { AddMeet, AddMeets } from "@/store/modules/meet/types";
+import { AddMeet } from "@/store/modules/meet/types";
 import { IMeet } from "@/entities/Meet";
 
 export default Vue.extend({
@@ -92,7 +90,11 @@ export default Vue.extend({
 		url: "",
 	}),
 	created() {
-		this.getData();
+		store.dispatch("getMeetings");
+
+		setInterval(() => {
+			store.dispatch("getMeetings");
+		}, 15000);
 	},
 	computed: {
 		meets() {
@@ -111,9 +113,10 @@ export default Vue.extend({
 					.map((arr) => {
 						return { day: arr, meets: [] };
 					});
+
 				return allDays.map((day) => {
 					const meets = this.meets.filter((meet) => {
-						return meet.date.split(" ")[0] == day.day;
+						return meet.date.split(" ")[0] === day.day;
 					});
 					day.meets = meets;
 					return day;
@@ -128,18 +131,8 @@ export default Vue.extend({
 		},
 
 		returnDay(date) {
+			console.info(new Date(date));
 			return format(new Date(date), "dd");
-		},
-
-		async getData() {
-			try {
-				const { data } = await axios.get(
-					generateUrl("/apps/assembly/api/v1/meet")
-				);
-				await store.commit(new AddMeets(data));
-			} catch (err) {
-				console.error(err.response);
-			}
 		},
 
 		normalizeStatus(str) {
@@ -149,6 +142,11 @@ export default Vue.extend({
 		async redirect(meet: IMeet) {
 			await store.commit(new AddMeet(meet));
 			this.$router.push({ name: "meet" });
+		},
+		hableButton(meet) {
+			return meet.status !== "waiting" && meet.status !== "cancelled"
+				? true
+				: false;
 		},
 
 		formatDate(date) {
