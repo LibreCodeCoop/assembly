@@ -16,6 +16,10 @@ export interface IMeet {
 	createdAt: string;
 	createdBy: IUserOwner;
 	description: string;
+	deletedAt?: number;
+	meetingId: string;
+	slug?: string;
+	url: string;
 	meetUrl: string;
 	status: string;
 }
