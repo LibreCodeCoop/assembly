@@ -198,7 +198,7 @@ class ReportService
         $meeting = $meeting[0];
 
         $return = [];
-        foreach ($forms as $key => $form) {
+        foreach ($forms as $form) {
             $access = $form->getAccess();
             $inGroup = false;
             foreach ($access['groups'] as $group) {
@@ -220,7 +220,7 @@ class ReportService
             ];
 
             if ($form->getExpires() > 0) {
-                // $date = new \DateTime::createFromFormat('U', $form->getExpires());
+                $date = \DateTime::createFromFormat('U', $form->getExpires());
                 $data['finishedAt'] = $date->format('Y-m-d H:i:s');
                 $data['status'] = 'disabled';
             }
@@ -279,5 +279,17 @@ class ReportService
     {
         $votes = $this->ReportMapper->getVotes($meetId);
         return $votes;
+    }
+
+    public function getAttendances($meetId)
+    {
+        $attendances = $this->ReportMapper->getAttendances($meetId);
+        return $attendances;
+    }
+
+    public function getTotalVotes($meetId)
+    {
+        $totalVotes = $this->ReportMapper->getTotalVotes($meetId);
+        return $totalVotes;
     }
 }

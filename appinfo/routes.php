@@ -17,6 +17,9 @@ return [
 		['name' => 'api#getPools', 'url' => '/api/v1/pools/{meetId}', 'verb' => 'GET'],
 		['name' => 'api#getTos', 'url' => '/api/v1/report/tos/{groupId}', 'verb' => 'GET'],
 		['name' => 'api#getVotes', 'url' => '/api/v1/report/votes/{meetId}', 'verb' => 'GET'],
+		['name' => 'api#getVotes', 'url' => '/api/v1/report/votes/{meetId}', 'verb' => 'GET'],
+		['name' => 'api#getAttendances', 'url' => '/api/v1/report/attendances/{meetId}', 'verb' => 'GET'],
+		['name' => 'api#getTotalVotes', 'url' => '/api/v1/report/totalVotes/{meetId}', 'verb' => 'GET'],
 
 		// Pages
 		['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
