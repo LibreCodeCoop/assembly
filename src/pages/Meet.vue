@@ -175,6 +175,7 @@ export default Vue.extend({
 					}
 				);
 				await store.commit(new ToggleModal(false));
+				store.dispatch("getPools", store.state.meet.meet.meetingId);
 			} catch (error) {
 				console.error(error);
 			}
@@ -199,7 +200,6 @@ export default Vue.extend({
 <style lang="scss">
 .modal-container {
 	width: 100% !important;
-	min-height: 100% !important;
 }
 .container-meet {
 	display: flex;
@@ -370,6 +370,7 @@ export default Vue.extend({
 			opacity: 0.5;
 		}
 	}
+
 	form {
 		width: 80%;
 		display: flex;
@@ -390,6 +391,7 @@ export default Vue.extend({
 				margin-bottom: 50px;
 			}
 			li {
+				width: 100%;
 				h1 {
 					font-size: 0.9rem;
 					font-weight: bold;
