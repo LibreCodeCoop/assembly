@@ -77,6 +77,7 @@ import { ptBR } from "date-fns/locale";
 import store from "@/store";
 import { AddMeet } from "@/store/modules/meet/types";
 import { IMeet } from "@/entities/Meet";
+import { addDays } from "date-fns/esm";
 
 export default Vue.extend({
 	name: "Room",
@@ -126,12 +127,11 @@ export default Vue.extend({
 	},
 	methods: {
 		returnDayOfWeek(date) {
-			return format(new Date(date), "EEE", { locale: ptBR });
+			return format(addDays(new Date(date), 1), "EEE", { locale: ptBR });
 		},
 
 		returnDay(date) {
-			console.info(new Date(date));
-			return format(new Date(date), "dd");
+			return format(addDays(new Date(date), 1), "dd");
 		},
 
 		normalizeStatus(str) {
