@@ -119,7 +119,12 @@ export default Vue.extend({
 	}),
 	computed: {
 		haveVotations() {
-			return store.state.votations.votations.length > 0 ? true : false;
+			if (store.state.votations.votations) {
+				return store.state.votations.votations.length > 0
+					? true
+					: false;
+			}
+			return false;
 		},
 		url() {
 			return store.state.meet.meet.url;
