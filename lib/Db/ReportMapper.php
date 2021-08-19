@@ -174,6 +174,8 @@ class ReportMapper extends QBMapper
                 $row['status'] = 'cancelled';
             } elseif (empty($row['status'])) {
                 $row['status'] = 'waiting';
+            } else {
+                $row['status'] = 'in progress';
             }
 
             $return[] = $row;
