@@ -280,4 +280,33 @@ class ReportMapper extends QBMapper
         }
         return $return;
     }
+
+    public function getAttendances($meetId)
+    {
+        $qb = $this->db->getQueryBuilder();
+        $query = $qb
+            ->addSelect('a.data')
+            ->addSelect('u.displayname')
+            ->from('users', 'u')
+            ->join('u', 'accounts', 'a', 'u.uid = a.uid')
+            ->join('u', 'authtoken', 'at', 'u.uid = at.uid')
+            ->join('u', 'group_user', 'gu', 'u.uid = gu.uid')
+            ->join('u', 'assembly_participants', 'p', 'u.uid = p.uid')
+            ->join('p', 'assembly_meetings', 'm', 'm.meeting_id = p.meeting_id')
+            ->where('m.slug = :meetId')
+            ->setParameter('meetId', $meetId)
+            ->groupBy(['a.data', 'u.displayname'])
+            ->addOrderBy('u.displayname');
+
+        $stmt = $query->execute();
+        $return = [];
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $user = json_decode($row['data']);
+            $row['email'] = $user->email->value;
+            unset($row['data']);
+
+            $return[] = $row;
+        }
+        return $return;
+    }
 }

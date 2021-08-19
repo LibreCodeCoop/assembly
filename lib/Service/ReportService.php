@@ -280,4 +280,10 @@ class ReportService
         $votes = $this->ReportMapper->getVotes($meetId);
         return $votes;
     }
+
+    public function getAttendances($meetId)
+    {
+        $attendances = $this->ReportMapper->getAttendances($meetId);
+        return $attendances;
+    }
 }
