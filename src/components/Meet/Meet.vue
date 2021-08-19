@@ -1,7 +1,7 @@
 <template>
 	<JitsiMeet
 		ref="jitsiref"
-		domain="meet.librecode.coop"
+		domain="sala.librecode.coop"
 		:options="jitsiOptions"
 	/>
 </template>
@@ -26,7 +26,7 @@ export default Vue.extend({
 	},
 	computed: {
 		customUrl() {
-			return this.url.split("https://meet.librecode.coop")[1];
+			return this.url.split("https://sala.librecode.coop")[1];
 		},
 		jitsiOptions() {
 			return {
