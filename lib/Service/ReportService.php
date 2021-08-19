@@ -220,7 +220,7 @@ class ReportService
             ];
 
             if ($form->getExpires() > 0) {
-                // $date = new \DateTime::createFromFormat('U', $form->getExpires());
+                $date = \DateTime::createFromFormat('U', $form->getExpires());
                 $data['finishedAt'] = $date->format('Y-m-d H:i:s');
                 $data['status'] = 'disabled';
             }
