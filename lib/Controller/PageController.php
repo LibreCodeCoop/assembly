@@ -50,15 +50,6 @@ class PageController extends Controller {
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
-	public function report($formId, $groupId) {
-		$return = $this->ReportService->getReport($formId, $groupId);
-		return new TemplateResponse('assembly', 'content/report', $return);
-	}
-
-	/**
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 */
 	public function videocall($meetingId) {
 		$query = $this->db->getQueryBuilder();
 		$query->select(['url', 'meeting_time'])->from('assembly_participants', 'ap')
