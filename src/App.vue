@@ -1,14 +1,5 @@
 <template>
 	<Content appName="assembly">
-		<AppNavigation>
-			<template #list>
-				<AppNavigationItem
-					:to="{ name: 'room' }"
-					:title="t('assembly', 'Room')"
-					icon="icon-video"
-				/>
-			</template>
-		</AppNavigation>
 		<AppContent :class="{ 'icon-loading': loading }">
 			<router-view v-show="!loading" :loading.sync="loading" />
 			<EmptyContent v-show="isRoot" class="emp-content">
@@ -24,17 +15,9 @@
 
 <script lang="ts">
 import Vue from "vue";
-import {
-	Content,
-	AppNavigation,
-	AppNavigationItem,
-	AppContent,
-	EmptyContent,
-} from "@nextcloud/vue";
+import { Content, AppContent, EmptyContent } from "@nextcloud/vue";
 export default Vue.extend({
 	components: {
-		AppNavigation,
-		AppNavigationItem,
 		AppContent,
 		Content,
 		EmptyContent,
