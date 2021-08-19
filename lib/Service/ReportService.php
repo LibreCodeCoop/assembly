@@ -220,8 +220,7 @@ class ReportService
             ];
 
             if ($form->getExpires() > 0) {
-                $date = new \DateTime();
-                $date->createFromFormat('U', $form->getExpires());
+                // $date = new \DateTime::createFromFormat('U', $form->getExpires());
                 $data['finishedAt'] = $date->format('Y-m-d H:i:s');
                 $data['status'] = 'disabled';
             }
@@ -266,4 +265,19 @@ class ReportService
         return $return;
     }
 
+    public function getTos($groupId)
+    {
+        $user = $this->userSession->getUser();
+        $groups = $this->groupManager->getUserGroupIds($user);
+        if (!in_array($groupId, $groups)) {
+            throw new \InvalidArgumentException('Invalid group');
+        }
+        return $this->ReportMapper->getTos($groupId);
+    }
+
+    public function getVotes($meetId)
+    {
+        $votes = $this->ReportMapper->getVotes($meetId);
+        return $votes;
+    }
 }

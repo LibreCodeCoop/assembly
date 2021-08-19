@@ -77,12 +77,10 @@ class ReportMapper extends QBMapper
         $stmt = $query->execute();
         $return = [];
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $tos_date = new \DateTime();
-            $tos_date->createFromFormat('U', $row['tos_date']);
+            $tos_date = \DateTime::createFromFormat('U', $row['tos_date']);
             $row['tos_date'] = $tos_date->format('Y-m-d H:i:s');
 
-            $last_activity = new \DateTime();
-            $last_activity->createFromFormat('U', $row['last_activity']);
+            $last_activity = \DateTime::createFromFormat('U', $row['last_activity']);
             $row['last_activity'] = $last_activity->format('Y-m-d H:i:s');
 
             $user = json_decode($row['data']);
@@ -145,21 +143,18 @@ class ReportMapper extends QBMapper
         $return = [];
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             if (!empty($row['date'])) {
-                $date = new \DateTime();
-                $date->createFromFormat('U', $row['date']);
+                $date = \DateTime::createFromFormat('U', $row['date']);
                 $row['date'] = $date->format('Y-m-d H:i');
             }
 
             $row['deletedAt'] = $row['deleted_at'];
             if (!empty($row['deletedAt'])) {
-                $date = new \DateTime();
-                $date->createFromFormat('U', $row['deletedAt']);
+                $date = \DateTime::createFromFormat('U', $row['deletedAt']);
                 $row['deletedAt'] = $date->format('Y-m-d H:i');
             }
             unset($row['deleted_at']);
 
-            $created_at = new \DateTime();
-            $created_at->createFromFormat('U', $row['created_at']);
+            $created_at = \DateTime::createFromFormat('U', $row['created_at']);
             $row['createdAt'] = $created_at->format('Y-m-d H:i');
             unset($row['created_at']);
 
@@ -224,5 +219,65 @@ class ReportMapper extends QBMapper
             $groups[] = $row['groupId'];
         }
         return $groups;
+    }
+
+    public function getTos($groupId)
+    {
+        $qb = $this->db->getQueryBuilder();
+        $query = $qb
+            ->addSelect('a.data')
+            ->selectAlias('ts.timestamp', 'tos_date')
+            ->from('users', 'u')
+            ->join('u', 'accounts', 'a', 'a.uid = u.uid')
+            ->leftJoin('u', 'termsofservice_sigs', 'ts', 'u.uid = ts.user_id')
+            ->join('u', 'group_user', 'gu', 'gu.uid = u.uid')
+            ->where('gu.gid = :groupId')
+            ->setParameter('groupId', $groupId)
+            ->orderBy('tos_date');
+
+        $stmt = $query->execute();
+        $return = [];
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $user = json_decode($row['data']);
+            $row['email'] = $user->email->value;
+            unset($row['data']);
+
+            $tos_date = \DateTime::createFromFormat('U', $row['tos_date']);
+            $row['tosDate'] = $tos_date->format('Y-m-d H:i:s');
+            unset($row['tos_date']);
+
+            $return[] = $row;
+        }
+        return $return;
+    }
+
+    public function getVotes($meetId)
+    {
+        $qb = $this->db->getQueryBuilder();
+        $query = $qb
+            ->selectAlias('forms.title', 'question')
+            ->selectAlias('submissions.timestamp', 'date')
+            ->selectAlias('submissions.user_id', 'user')
+            ->from('forms_v2_answers', 'answers')
+            ->join('answers', 'forms_v2_questions', 'questions', 'questions.id = answers.question_id')
+            ->join('answers', 'forms_v2_submissions', 'submissions', 'submissions.id = answers.submission_id')
+            ->join('questions', 'forms_v2_forms', 'forms', 'forms.id = questions.form_id')
+            ->join('submissions', 'group_user', 'gu', 'gu.uid = submissions.user_id')
+            ->join('forms', 'assembly_meeting_pools', 'mp', 'forms.id = mp.form_id')
+            ->join('mp', 'assembly_meetings', 'm', 'm.meeting_id = mp.meeting_id')
+            ->where('m.slug = :meetId')
+            ->setParameter('meetId', $meetId)
+            ->groupBY(['forms.title', 'submissions.timestamp', 'submissions.user_id'])
+            ->addOrderBy('date')
+            ->addOrderBy('question');
+        $stmt = $query->execute();
+        $return = [];
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $date = \DateTime::createFromFormat('U', $row['date']);
+            $row['date'] = $date->format('Y-m-d H:i:s');
+
+            $return[] = $row;
+        }
+        return $return;
     }
 }
