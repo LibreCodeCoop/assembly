@@ -9,7 +9,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { getCurrentUser } from "@nextcloud/auth";
-import { JitsiMeet } from "@mycure/vue-jitsi-meet";
+import JitsiMeet from "@/components/jitsiMeet/JitsiMeet.vue";
 
 export default Vue.extend({
 	name: "Meet",
@@ -26,7 +26,7 @@ export default Vue.extend({
 	},
 	computed: {
 		customUrl() {
-			return this.url.split("https://meet.librecode.coop/")[1];
+			return this.url.split("https://meet.librecode.coop")[1];
 		},
 		jitsiOptions() {
 			return {

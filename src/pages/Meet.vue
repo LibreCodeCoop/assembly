@@ -58,6 +58,7 @@
 			v-show="showModal"
 			:title="t('assembly', 'Votações')"
 			v-if="form"
+			:canClose="false"
 		>
 			<div class="container-modal">
 				<header>
@@ -240,7 +241,7 @@ export default Vue.extend({
 			max-height: 500px;
 			@media screen and (max-width: 650px) {
 				width: 100%;
-				max-height: 250px;
+				max-height: 45%;
 			}
 
 			div {
@@ -267,7 +268,8 @@ export default Vue.extend({
 			overflow: scroll;
 			@media (max-width: 650px) {
 				width: 100%;
-				max-height: 150px;
+				max-height: 55%;
+				border-top: 1px solid #cecece;
 			}
 
 			h1 {
@@ -312,6 +314,11 @@ export default Vue.extend({
 							padding: 10px;
 							overflow-x: scroll;
 							margin: 10px;
+
+							@media (max-width: 650px) {
+								width: 100%;
+							}
+
 							p {
 								height: 70%;
 								overflow: hidden;
