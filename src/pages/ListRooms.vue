@@ -5,7 +5,6 @@
 				<div class="date">
 					<span>{{ returnDayOfWeek(date.day) }}</span>
 					<h3>{{ returnDay(date.day) }}</h3>
-					<!-- <span v-if="day.today">Hoje</span> -->
 				</div>
 				<div class="rooms-peer-date">
 					<table>
@@ -21,7 +20,7 @@
 										<p class="icon-user"></p>
 										<span>
 											{{
-												t("assembly", "By {name}", {
+												t("assembly", "Por {name}", {
 													name: meet.createdBy
 														.displayName
 														? meet.createdBy
@@ -64,7 +63,7 @@
 			</div>
 			<EmptyContent v-show="filterByDate === false">
 				<template #desc>
-					{{ t("assembly", "You don't have Meets") }}
+					{{ t("assembly", "Não há Assembleias") }}
 				</template>
 			</EmptyContent>
 		</div>

@@ -7,10 +7,10 @@
 				@click="enableMeet"
 				v-if="url"
 			>
-				{{ t("assembly", "Join Meet") }}
+				{{ t("assembly", "Entrar na assembleia") }}
 			</button>
 			<span v-else>{{
-				t("assembly", "Wait until time for the meeting")
+				t("assembly", "Espere até a hora da Assembleia")
 			}}</span>
 			<meet v-if="showMeet" :url="url" />
 		</div>
@@ -19,12 +19,12 @@
 				<div v-for="votation in votations" :key="votation.id">
 					<h1>{{ votation.title }}</h1>
 					<button @click="selectVotation(votation.formId)">
-						{{ t("assembly", "View") }}
+						{{ t("assembly", "Ver") }}
 					</button>
 				</div>
 			</div>
 			<div class="results">
-				<h1>{{ t("assembly", "Results") }}</h1>
+				<h1>{{ t("assembly", "Resultados") }}</h1>
 				<div class="question">
 					<li
 						v-for="(question, index) in votation.questions"
