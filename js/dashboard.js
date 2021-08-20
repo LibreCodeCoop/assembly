@@ -36,7 +36,7 @@ function loadaNewResults(response){
 	} else {
 		response.forEach(arr => {
 			content.innerHTML = '<div class="explore-content"><div class="explore-value"><div class="explore-subscribe"><a class="button" href="'
-									+ arr.result_url + '" target="_blank">Resultado '
+									+ arr.result_url + '" target="_blank">'
 									+ arr.title + '</a></div></div></div>' + content.innerHTML;
 		});
 	}
