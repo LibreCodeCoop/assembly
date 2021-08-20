@@ -74,11 +74,11 @@ script("assembly", "dashboard.css#v1.0");
 								<div class="explore-subscribe">
 
 								<?php
-									if (!empty($row['submission'])) {
+									// if (!empty($row['submission'])) {
 										?><a class="button" href="<?php echo $row['result_url'];?>" target="_blank"><?php echo $row['title'];?></a><?php
-									} else {
+									/*} else {
 										?>Vote para visualizar a apuração<?php
-									}
+									}*/
 									?>
 								</div>
 							</div>

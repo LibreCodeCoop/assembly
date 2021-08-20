@@ -39,13 +39,13 @@ function loadaNewResults(response){
 		content.innerHTML = '<div class="explore-content"><h3>Nenhuma votação aberta ainda</h3></div>';
 	} else {
 		response.forEach(arr => {
-			if (arr.submission) {
+			// if (arr.submission) {
 				content.innerHTML = '<div class="explore-content"><div class="explore-value"><div class="explore-subscribe"><a class="button" href="'
 										+ arr.result_url + '" target="_blank">'
 										+ arr.title + '</a></div></div></div>' + content.innerHTML;
-			} else {
-				content.innerHTML = '<div class="explore-content"> <div class="explore-value"><div class="explore-subscribe">Vote para visualizar a apuração</div>'
-			}
+			// } else {
+			// 	content.innerHTML = '<div class="explore-content"> <div class="explore-value"><div class="explore-subscribe">Vote para visualizar a apuração</div>'
+			// }
 		});
 	}
 }
