@@ -60,7 +60,6 @@ class ReportMapper extends QBMapper
             ->leftJoin('p', 'assembly_meetings', 'm', 'm.meeting_id = p.meeting_id')
             ->join('u', 'accounts', 'a', 'a.uid = u.uid')
             ->join('u', 'termsofservice_sigs', 'ts', 'u.uid = ts.user_id')
-            ->join('u', 'group_user', 'gu', 'gu.uid = u.uid')
             ->join(
                 'u',
                 new QueryFunction('('.$this->db->getQueryBuilder()
@@ -71,9 +70,10 @@ class ReportMapper extends QBMapper
                     ->getSQL().')'),
                 'at',
                 'at.uid = u.uid'
-            );
+            )
+            ->where('at.last_activity > m.meeting_time');
         if ($slug) {
-            $query->where('m.slug = :slug')
+            $query->andWhere('m.slug = :slug')
                 ->setParameter('slug', $slug);
         }
         $stmt = $query->execute();
