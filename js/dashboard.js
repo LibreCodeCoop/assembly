@@ -16,7 +16,7 @@ function changeUrlMeet(url){
 function loadNewForms(responses){
 	const content = document.getElementById("grid-content-forms");
 	content.innerHTML = "";
-	if (response.length == 0) {
+	if (responses.length == 0) {
 		content.innerHTML = '<div class="explore-content"><h3>Nenhuma votação aberta ainda</h3></div>';
 	} else {
 		responses.forEach((arr)=>{
