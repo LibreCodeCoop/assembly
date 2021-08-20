@@ -30,6 +30,12 @@
     margin: 0 25px 25px 0;
 }
 
+@media screen and (max-width: 750px) {
+    #explore .grid .grid-item {
+        width: 80%;
+    }
+}
+
 #explore h1 {
     font-size: 13pt;
     background-repeat: no-repeat;
@@ -61,7 +67,7 @@
 
 #explore .grid-item-content {
     padding: 30px;
-    min-height: 200px;
+    min-height: 100px;
 }
 
 #explore .explore-logo {
