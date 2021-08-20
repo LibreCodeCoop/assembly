@@ -153,4 +153,16 @@ class ApiController extends BaseApiController
         $return = $this->ReportService->getMeetings();
         return new DataResponse($return, Http::STATUS_OK);
     }
+
+    /**
+     * @NoCSRFRequired
+     * @NoAdminRequired
+     *
+     * @return array
+     */
+    public function getPools($meetId)
+    {
+        $return = $this->ReportService->getPools($meetId);
+        return new DataResponse($return, Http::STATUS_OK);
+    }
 }

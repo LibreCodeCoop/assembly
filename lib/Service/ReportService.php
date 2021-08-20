@@ -7,6 +7,13 @@ use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use OCA\Assembly\Db\ReportMapper;
+use OCA\Forms\Db\Answer;
+use OCA\Forms\Db\AnswerMapper;
+use OCA\Forms\Db\FormMapper;
+use OCA\Forms\Db\OptionMapper;
+use OCA\Forms\Db\QuestionMapper;
+use OCA\Forms\Db\SubmissionMapper;
+use OCA\Forms\Service\FormsService;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
@@ -32,6 +39,18 @@ class ReportService
     protected $userSession;
     /** @var ReportMapper */
     protected $ReportMapper;
+    /** @var FormMapper */
+    protected $formMapper;
+    /** @var SubmissionMapper */
+    protected $submissionMapper;
+    /** @var FormsService */
+    protected $formsService;
+    /** @var AnswerMapper */
+    protected $answerMapper;
+    /** @var QuestionMapper */
+    protected $questionMapper;
+    /** @var OptionMapper */
+    protected $optionMapper;
     /** @var IURLGenerator */
     protected $urlGenerator;
 
@@ -43,6 +62,12 @@ class ReportService
         IDBConnection $db,
         IUserSession $userSession,
         ReportMapper $ReportMapper,
+        FormMapper $formMapper,
+        SubmissionMapper $submissionMapper,
+        FormsService $formsService,
+        AnswerMapper $answerMapper,
+        QuestionMapper $questionMapper,
+        OptionMapper $optionMapper,
         IURLGenerator $urlGenerator
     ) {
         $this->mapper = $mapper;
@@ -51,7 +76,13 @@ class ReportService
         $this->groupManager = $groupManager;
         $this->db = $db;
         $this->userSession = $userSession;
-        $this->ReportMapper =  $ReportMapper;
+        $this->ReportMapper = $ReportMapper;
+        $this->formMapper = $formMapper;
+        $this->submissionMapper = $submissionMapper;
+        $this->formsService = $formsService;
+        $this->answerMapper = $answerMapper;
+        $this->questionMapper = $questionMapper;
+        $this->optionMapper = $optionMapper;
         $this->urlGenerator = $urlGenerator;
     }
     public function getResult($userId, $formId)
@@ -65,7 +96,7 @@ class ReportService
         if ($user instanceof IUser) {
             $groups = $this->groupManager->getUserGroupIds($user);
         }
-        $return['data'] = $this->ReportMapper->getPoll($user->getUID());
+        $return['data'] = $this->ReportMapper->getPool($user->getUID());
         foreach ($return['data'] as $key => $item) {
             $return['data'][$key]['vote_url'] = $this->urlGenerator->linkToRoute(
                 'forms.page.goto_form',
@@ -140,7 +171,6 @@ class ReportService
 
     public function getReport($formId, $slug)
     {
-
         $data = $this->ReportMapper->getResult($this->userSession->getUser()->getUID(), $formId);
         $available = $this->ReportMapper->usersAvailable($slug);
         $responses = [];
@@ -178,6 +208,85 @@ class ReportService
             $data[$id] = $row;
         }
         return $data;
+    }
+
+    public function getPools($meetId)
+    {
+        $forms = $this->formMapper->findAll();
+        $user = $this->userSession->getUser();
+        $meeting = $this->ReportMapper->getMeetings($user->getUID(), $meetId);
+        if (empty($meeting)) {
+            return [];
+        }
+        $meeting = $meeting[0];
+
+        $return = [];
+        foreach ($forms as $key => $form) {
+            $access = $form->getAccess();
+            $inGroup = false;
+            foreach ($access['groups'] as $group) {
+                if ($this->groupManager->isInGroup($user->getUID(), $group)) {
+                    $inGroup = true;
+                }
+            }
+            if (!$inGroup) {
+                continue;
+            }
+
+            $data = [
+                'title' => $form->getTitle(),
+                'description' => $form->getDescription(),
+                'formId' => $form->getId(),
+                'finishedAt' => null,
+                'status' => 'enabled',
+                'voted' => false
+            ];
+
+            if ($form->getExpires() > 0) {
+                $date = new \DateTime();
+                $date->createFromFormat('U', $form->getExpires());
+                $data['finishedAt'] = $date->format('Y-m-d H:i:s');
+                $data['status'] = 'disabled';
+            }
+
+            $submissions = $this->submissionMapper->findByForm($form->getId());
+            $questions = [];
+            foreach ($submissions as $submission) {
+                if ($submission->getUserId() === $user->getUID()) {
+                    $data['voted'] = true;
+                }
+                $answers = array_reduce($this->answerMapper->findBySubmission($submission->getId()), function (array $carry, Answer $answer) {
+                    $questionId = $answer->getQuestionId();
+    
+                    // If key exists, insert separator
+                    if (key_exists($questionId, $carry)) {
+                        $carry[$questionId] .= '; ' . $answer->getText();
+                    } else {
+                        $carry[$questionId] = $answer->getText();
+                    }
+    
+                    return $carry;
+                }, []);
+                foreach ($answers as $questionId => $text) {
+                    if (!isset($questions[$questionId])) {
+                        $questions[$questionId]['question'] = $this->questionMapper->findById($questionId);
+                        $questions[$questionId]['options'] = $this->optionMapper->findByQuestion($questionId);
+                    }
+                    $data['questions'][$questionId]['text'] = $questions[$questionId]['question']->getText();
+                    foreach ($questions[$questionId]['options'] as $option) {
+                        if (!isset($data['questions'][$questionId]['options'][$option->getId()]['total'])) {
+                            $data['questions'][$questionId]['options'][$option->getId()]['total'] = 0;
+                            $data['questions'][$questionId]['options'][$option->getId()]['text'] = $option->getText();
+                        }
+                        if ($option->getText() === $text) {
+                            $data['questions'][$questionId]['options'][$option->getId()]['total']++;
+                        }
+                    }
+                }
+            }
+            $return[] = $data;
+        }
+        return $return;
     }
 
 }
