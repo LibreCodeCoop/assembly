@@ -38,9 +38,10 @@ style('assembly', 'result');
 			</div>
 			<div class="grid-item-content-half">
 				<div class="result-content">
-					<h1>Aptos a votar</h1>
+					<h1>Total de presentes</h1>
 					<div class="result-value" id="aptos">
 						<h3><?php echo $metadata['available'];?></h3>
+						<p>Total de pessoas que fizeram acesso ao távola após o início da assembleia</p>
 					</div>
 				</div>
 			</div>
