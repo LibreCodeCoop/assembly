@@ -110,7 +110,14 @@ class ReportMapper extends QBMapper
                 ->leftJoin('p', 'assembly_meetings', 'm', 'm.meeting_id = p.meeting_id')
                 ->where('u.uid = :userId')
                 ->andWhere('expires = 0  or expires > extract(epoch from now())')
-                ->setParameter('userId', $userId);
+                ->setParameter('userId', $userId)
+                ->groupBy([
+                    'f.title',
+                    'f.hash',
+                    'f.id',
+                    'g.gid',
+                    'm.slug'
+                ]);
             return $query
                 ->execute()
                 ->fetchAll();
