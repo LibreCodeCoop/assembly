@@ -1,7 +1,7 @@
 <?php
 
 style('assembly','explore');
-script("assembly", "dashboard");
+script("assembly", "dashboard.css#v1.0");
 ?>
 
 <div id="explore">
