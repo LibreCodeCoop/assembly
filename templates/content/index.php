@@ -39,8 +39,7 @@ script("assembly", "dashboard");
 								<div class="explore-subscribe">
 									<?php
 									if (!empty($row['submission'])) {
-										?>Voto registrado para: <?php
-										echo $row['title'];
+										?>Voto registrado<?php
 									} else {
 										?><a class="button" href="<?php echo $row['vote_url'];?>" target="_blank"><?php echo $row['title'];?></a><?php
 									}
