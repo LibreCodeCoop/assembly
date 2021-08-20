@@ -75,14 +75,14 @@ class ReportService
                 'assembly.page.report',
                 [
                     'formId' => $item['formId'],
-                    'groupId' => $item['groupId']
+                    'slug' => $item['slug']
                 ]
             );
             $return['data'][$key]['result_api_url'] = $this->urlGenerator->linkToRoute(
                 'assembly.api.report',
                 [
                     'formId' => $item['formId'],
-                    'groupId' => $item['groupId']
+                    'slug' => $item['slug']
                 ]
             );
             unset($return['data'][$key]['hash']);
@@ -138,11 +138,11 @@ class ReportService
             '?jwt=' . $token->toString();
     }
 
-    public function getReport($formId, $groupId)
+    public function getReport($formId, $slug)
     {
 
         $data = $this->ReportMapper->getResult($this->userSession->getUser()->getUID(), $formId);
-        $available = $this->ReportMapper->usersAvailable($groupId);
+        $available = $this->ReportMapper->usersAvailable($slug);
         $responses = [];
         $metadata['total'] = 0;
         $metadata['available'] = count($available);

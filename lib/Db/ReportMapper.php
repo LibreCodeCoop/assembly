@@ -47,7 +47,7 @@ class ReportMapper extends QBMapper
     }
     
 
-    public function usersAvailable($groupId = null)
+    public function usersAvailable($slug = null)
     {
         $qb = $this->db->getQueryBuilder();
         $query = $qb->select('u.displayname')
@@ -56,6 +56,8 @@ class ReportMapper extends QBMapper
             ->selectAlias(new Literal('to_timestamp(ts.timestamp)'), 'tos_date')
             ->selectAlias(new Literal('to_timestamp(at.last_activity)'), 'last_activity')
             ->from('users', 'u')
+            ->leftJoin('u', 'assembly_participants', 'p', 'p.uid = u.uid')
+            ->leftJoin('p', 'assembly_meetings', 'm', 'm.meeting_id = p.meeting_id')
             ->join('u', 'accounts', 'a', 'a.uid = u.uid')
             ->join('u', 'termsofservice_sigs', 'ts', 'u.uid = ts.user_id')
             ->join('u', 'group_user', 'gu', 'gu.uid = u.uid')
@@ -70,9 +72,9 @@ class ReportMapper extends QBMapper
                 'at',
                 'at.uid = u.uid'
             );
-        if ($groupId) {
-            $query->where('gu.gid = :groupId')
-                ->setParameter('groupId', $groupId);
+        if ($slug) {
+            $query->where('m.slug = :slug')
+                ->setParameter('slug', $slug);
         }
         return $query
             ->execute()
@@ -86,9 +88,12 @@ class ReportMapper extends QBMapper
                 ->selectAlias('f.hash', 'hash')
                 ->selectAlias('f.id', 'formId')
                 ->selectAlias('g.gid', 'groupId')
+                ->addSelect('m.slug')
                 ->from('users', 'u')
                 ->join('u', 'group_user', 'g', 'g.uid = u.uid')
                 ->join('g', 'forms_v2_forms', 'f', "jsonb_exists((f.access_json->'groups')::jsonb, g.gid)")
+                ->leftJoin('u', 'assembly_participants', 'p', 'p.uid = u.uid')
+                ->leftJoin('p', 'assembly_meetings', 'm', 'm.meeting_id = p.meeting_id')
                 ->where('u.uid = :userId')
                 ->andWhere('expires = 0  or expires > extract(epoch from now())')
                 ->setParameter('userId', $userId);

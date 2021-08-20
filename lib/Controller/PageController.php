@@ -46,8 +46,8 @@ class PageController extends Controller {
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
-	public function report($formId, $groupId) {
-		$return = $this->ReportService->getReport($formId, $groupId);
+	public function report($formId, $slug) {
+		$return = $this->ReportService->getReport($formId, $slug);
 		return new TemplateResponse('assembly', 'content/report', $return);
 	}
 
