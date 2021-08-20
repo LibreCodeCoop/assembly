@@ -97,7 +97,11 @@ class ReportService
             $groups = $this->groupManager->getUserGroupIds($user);
         }
         $return['data'] = $this->ReportMapper->getPool($user->getUID());
+        $slug = date('Ymd') . $groups[0];
         foreach ($return['data'] as $key => $item) {
+            if (!empty($item['slug'])) {
+                $slug = $item['slug'];
+            }
             $return['data'][$key]['vote_url'] = $this->urlGenerator->linkToRoute(
                 'forms.page.goto_form',
                 ['hash' => $item['hash']]
@@ -137,9 +141,9 @@ class ReportService
                 $return['time'] = isset($row['meeting_time']) ? date('Y-m-d H:i:s', $row['meeting_time']) : null;
             }
         } else if ($this->appConfig->getAppValue('enable_jitsi_jwt')) {
-            $return['meetUrl'] = $this->generateJitsiUrl($user, date('Ymd') . $groups[0], $groups);
+            $return['meetUrl'] = $this->generateJitsiUrl($user, $slug, $groups);
         } else {
-            $return['meetUrl'] = 'https://meet.jit.si/' . date('Ymd') . $groups[0];
+            $return['meetUrl'] = 'https://meet.jit.si/' . $slug;
         }
         return $return;
     }
