@@ -16,22 +16,30 @@ function changeUrlMeet(url){
 function loadNewForms(responses){
 	const content = document.getElementById("grid-content-forms");
 	content.innerHTML = "";
-	responses.forEach((arr)=>{
-		content.innerHTML = '<div class="explore-content"> <div class="explore-value"><div class="explore-subscribe"><a class="button" href="'
-		+ arr.vote_url +'" target="_blank">'
-		+ arr.title+'</a></div></div></div>' + content.innerHTML;
-	});
+	if (response.length == 0) {
+		content.innerHTML = '<div class="explore-content"><h3>Nenhuma votação aberta ainda</h3></div>';
+	} else {
+		responses.forEach((arr)=>{
+			content.innerHTML = '<div class="explore-content"> <div class="explore-value"><div class="explore-subscribe"><a class="button" href="'
+			+ arr.vote_url +'" target="_blank">'
+			+ arr.title+'</a></div></div></div>' + content.innerHTML;
+		});
+	}
 	return;
 }
 
 function loadaNewResults(response){
 	const content = document.getElementById("grid-content-result");
 	content.innerHTML = "";
-	response.forEach(arr => {
-		content.innerHTML = '<div class="explore-content"><div class="explore-value"><div class="explore-subscribe"><a class="button" href="'
-								+ arr.result_url + '" target="_blank">Resultado '
-								+ arr.title + '</a></div></div></div>' + content.innerHTML;
-	});
+	if (response.length == 0) {
+		content.innerHTML = '<div class="explore-content"><h3>Nenhuma votação aberta ainda</h3></div>';
+	} else {
+		response.forEach(arr => {
+			content.innerHTML = '<div class="explore-content"><div class="explore-value"><div class="explore-subscribe"><a class="button" href="'
+									+ arr.result_url + '" target="_blank">Resultado '
+									+ arr.title + '</a></div></div></div>' + content.innerHTML;
+		});
+	}
 }
 
 function changeData(response){
