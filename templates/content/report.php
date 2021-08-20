@@ -8,7 +8,7 @@ style('assembly', 'result.css#v1.0');
 		<div class="category-wrapper">
 			<div class="category">
 				Resultado <?php echo $metadata['title'];?>
-				<div class="time-warn" style="">Os resultados são atualizados automaticamente</div>
+				<div class="time-warn">Os resultados são atualizados automaticamente</div>
 			</div>
 
 		</div>
