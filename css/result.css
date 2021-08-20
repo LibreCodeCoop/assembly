@@ -18,7 +18,7 @@
 #result {
     height: 100%;
     width: 100%;
-    padding: 45px 0 45px 45px;
+    padding: 45px;
 }
 
 
@@ -69,6 +69,12 @@
 
 }
 
+@media screen and (max-width: 750px) {
+    #result .grid .grid-item-content {
+        width: 80%;
+    }
+}
+
 #result .grid-item-content-half {
     padding: 30px;
     background: #F8F8F8;
@@ -77,6 +83,12 @@
     float: left;
     margin: 25px;
 
+}
+
+@media screen and (max-width: 750px) {
+    #result .grid .grid-item-content-half {
+        width: 80%;
+    }
 }
 
 #result .result-value {
@@ -139,7 +151,6 @@
     color: #fff;
     font-weight: 400;
     font-size: 13px;
-    position: absolute;
     margin: 8px;
     top: 0;
     right: 0;
