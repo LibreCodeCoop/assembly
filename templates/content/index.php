@@ -38,11 +38,11 @@ script("assembly", "dashboard.css#v1.0");
 							<div class="explore-value">
 								<div class="explore-subscribe">
 									<?php
-									if (!empty($row['submission'])) {
+									/*if (!empty($row['submission'])) {
 										?>Voto registrado<?php
-									} else {
+									} else {*/
 										?><a class="button" href="<?php echo $row['vote_url'];?>" target="_blank"><?php echo $row['title'];?></a><?php
-									}
+									// }
 									?>
 								</div>
 							</div>
