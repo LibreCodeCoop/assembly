@@ -66,7 +66,7 @@ script("assembly", "dashboard");
 						<div class="explore-content">
 							<div class="explore-value">
 								<div class="explore-subscribe">
-									<a class="button" href="<?php echo $row['result_url'];?>" target="_blank">Resultado <?php echo $row['title'];?></a>
+									<a class="button" href="<?php echo $row['result_url'];?>" target="_blank"><?php echo $row['title'];?></a>
 								</div>
 							</div>
 						</div>
