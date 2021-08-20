@@ -1,6 +1,6 @@
 <?php
 
-style('assembly','explore',);
+style('assembly','explore');
 script("assembly", "dashboard");
 ?>
 

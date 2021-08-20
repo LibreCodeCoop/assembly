@@ -1,6 +1,6 @@
 <?php
 script('assembly', 'report');
-style('assembly', 'result');
+style('assembly', 'result.css#v1.0');
 ?>
 
 <div id="result">
