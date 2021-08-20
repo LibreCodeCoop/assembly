@@ -37,7 +37,14 @@ script("assembly", "dashboard");
 						<div class="explore-content">
 							<div class="explore-value">
 								<div class="explore-subscribe">
-									<a class="button" href="<?php echo $row['vote_url'];?>" target="_blank"><?php echo $row['title'];?></a>
+									<?php
+									if (!empty($row['submission'])) {
+										?>Voto registrado para: <?php
+										echo $row['title'];
+									} else {
+										?><a class="button" href="<?php echo $row['vote_url'];?>" target="_blank"><?php echo $row['title'];?></a><?php
+									}
+									?>
 								</div>
 							</div>
 						</div>
@@ -66,7 +73,14 @@ script("assembly", "dashboard");
 						<div class="explore-content">
 							<div class="explore-value">
 								<div class="explore-subscribe">
-									<a class="button" href="<?php echo $row['result_url'];?>" target="_blank"><?php echo $row['title'];?></a>
+
+								<?php
+									if (!empty($row['submission'])) {
+										?><a class="button" href="<?php echo $row['result_url'];?>" target="_blank"><?php echo $row['title'];?></a><?php
+									} else {
+										?>Vote para visualizar a apuração<?php
+									}
+									?>
 								</div>
 							</div>
 						</div>
