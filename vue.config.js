@@ -18,6 +18,10 @@ module.exports = {
 
 	outputDir: "./js",
 
+	chainWebpack: (config) => {
+		config.entry("settings").add("./src/settings.ts").end();
+	},
+
 	configureWebpack: (config) => {
 		config.output.filename = `${appName}-[name].js?v=[contenthash]`;
 		config.output.chunkFilename = `${appName}-[name].js?v=[contenthash]`;
