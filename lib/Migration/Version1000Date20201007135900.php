@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright Copyright (c) 2019 Lyseon Tech <dev@LT.coop.br>
+ * @copyright Copyright (c) 2019 LibreCode <dev@librecode.coop.br>
  *
  * @author Lyseon Tech <dev@LT.coop.br>
  *
