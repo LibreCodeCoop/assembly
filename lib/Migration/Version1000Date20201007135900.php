@@ -2,7 +2,7 @@
 /**
  * @copyright Copyright (c) 2019 LibreCode <dev@librecode.coop.br>
  *
- * @author Lyseon Tech <dev@LT.coop.br>
+ * @author LibreCode <dev@librecode.coop>
  *
  * @license GNU AGPL version 3 or any later version
  *
