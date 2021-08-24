@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 LibreCode <dev@librecode.coop>
  *
- * @author Lyseon Tech <dev@LT.coop.br>
+ * @author LibreCode <dev@librecode.coop>
  *
  * @license GNU AGPL version 3 or any later version
  *
